@@ -1,0 +1,20 @@
+{
+  "Help": {
+    "name": "Help",
+    "group": "User",
+    "desc": "Showing a list of all commands. <Required> / [Optional]",
+    "usage": "help [group OR command]"
+  },
+  "Delete": {
+    "name": "Delete",
+    "group": "Admin",
+    "desc": "Deletes x messages",
+    "usage": "delete <number of messages>"
+  },
+  "Relic": {
+    "name": "Relic",
+    "group": "User",
+    "desc": "Search for relic information",
+    "usage": "relic <Relic Name> [Refinement]"
+  }
+}

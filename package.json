@@ -1,0 +1,23 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "Testing new Discord bot",
+  "main": "app.js",
+  "scripts": {
+    "devStart": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.1.0",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "env-cmd": "^10.0.1",
+    "node-fetch": "^2.6.0",
+    "node-gyp": "^3.8.0",
+    "strict-uri-encode": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodeman": "^1.1.2"
+  }
+}
