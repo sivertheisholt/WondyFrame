@@ -1,0 +1,32 @@
+    {
+    "Lith": {
+        "Intact": "https://cdn.warframestat.us/img/lith-intact.png",
+        "Exceptional": "https://cdn.warframestat.us/img/lith-exceptional.png",
+        "Flawless": "https://cdn.warframestat.us/img/lith-flawless.png",
+        "Radiant": "https://cdn.warframestat.us/img/lith-radiant.png"
+    },
+    "Meso": {
+        "Intact": "https://cdn.warframestat.us/img/meso-intact.png",
+        "Exceptional": "https://cdn.warframestat.us/img/meso-exceptional.png",
+        "Flawless": "https://cdn.warframestat.us/img/meso-flawless.png",
+        "Radiant": "https://cdn.warframestat.us/img/meso-radiant.png"
+    },
+    "Neo": {
+        "Intact": "https://cdn.warframestat.us/img/neo-intact.png",
+        "Exceptional": "https://cdn.warframestat.us/img/neo-exceptional.png",
+        "Flawless": "https://cdn.warframestat.us/img/neo-flawless.png",
+        "Radiant": "https://cdn.warframestat.us/img/neo-radiant.png"
+    },
+    "Axi": {
+        "Intact": "https://cdn.warframestat.us/img/axi-intact.png",
+        "Exceptional": "https://cdn.warframestat.us/img/axi-exceptional.png",
+        "Flawless": "https://cdn.warframestat.us/img/axi-flawless.png",
+        "Radiant": "https://cdn.warframestat.us/img/axi-radiant.png"
+    },
+    "Requiem": {
+        "Intact": "https://cdn.warframestat.us/img/requiem-intact.png",
+        "Exceptional": "https://cdn.warframestat.us/img/requiem-exceptional.png",
+        "Flawless": "https://cdn.warframestat.us/img/requiem-flawless.png",
+        "Radiant": "https://cdn.warframestat.us/img/requiem-radiant.png"
+    }
+}

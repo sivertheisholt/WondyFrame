@@ -7,8 +7,8 @@ const warframe = require('./Handling/warframeHandler.js');
 
 const bot = new Discord.Client();
 
-let warframeInfoSorted;
-sortData()
+let warframeDropInfo, warframeRelicInfo;
+sortData();
 
 //Reconnect
 const cli = new Discord.Client({ autoReconnect: true });
@@ -19,7 +19,7 @@ const token = process.env.DISCORD_TOKEN;
 const prefix = '!';
 
 bot.on('message', async message => {
-    messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeInfoSorted);
+    messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo);
 });
 
 bot.on('ready', () => {
@@ -33,9 +33,14 @@ bot.on('ready', () => {
 async function sortData() {
     try {
         let getWarframeData = await warframe.data.getMissionRewards();
-        console.log("Getting mission rewards");
-        warframeInfoSorted = await botOnReady.data.sortData(getWarframeData);
-        //await console.log(warframeInfoSorted);
+        let getWarframeRelicData = await warframe.data.getAllRelicInfo();
+        let getWarframeCetusBountyRewards = await warframe.data.getCetusBountyRewards();
+        let getWarframeFortunaBountyRewards = await warframe.data.getFortunaBountyRewards();
+        let getWarframeDeimosBountyRewards = await warframe.data.getDeimosBountyRewards();
+        let getEnemyBlueprintDrops = await warframe.data.getEnemyBlueprintDrops();
+        console.log("Getting mission rewards and relic rewards...");
+        warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops);
+        warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
     } catch(err) {
         console.log(err);
     }   

@@ -6,7 +6,6 @@ var methods = {
         return new Promise((resolve, reject) => {
             try {
                 resolve(warframe.getData(`/data/relics/${tier}/${name}`));
-                //resolve(returnFromApi)
             } catch (err) {
                 reject(err);
             }
@@ -20,7 +19,52 @@ var methods = {
                 reject(err);
             }
         })
-    }
+    },
+    getAllRelicInfo: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/relics.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getCetusBountyRewards: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/cetusBountyRewards.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getFortunaBountyRewards: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/solarisBountyRewards.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getDeimosBountyRewards: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/deimosRewards.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getEnemyBlueprintDrops: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/enemyBlueprintTables.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
 }
 
 exports.data = methods;
