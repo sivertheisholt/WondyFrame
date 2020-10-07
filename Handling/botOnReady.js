@@ -3,22 +3,22 @@ var methods = {
     sortData: async function (t, t2, t3, t4, t5) {
         return new Promise((resolve, reject) => {
             const map = new Map()
-            const addRewardsArray = (planet, node, rotation, rewards, gameMode, blueprintDropChance) => {
+            const addRewardsArray = (planet, node, rotation, rewards, gameMode, blueprintDropChance, isEvent) => {
                 for (const reward of rewards) {
                     let r = map.get(reward.itemName)
                     if (!r) {
                         r = []
                         map.set(reward.itemName, r)
                     }
-                    r.push({ gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
+                    r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
                 }
             }
-            const addRewards = (planetName, nodeName, rewards, gameMode) => {
+            const addRewards = (planetName, nodeName, rewards, gameMode, isEvent) => {
                 if (Array.isArray(rewards)) {
-                    addRewardsArray(planetName, nodeName, null, rewards, gameMode, null)
+                    addRewardsArray(planetName, nodeName, null, rewards, gameMode, null, isEvent)
                 } else {
                     for (const rotation of Object.keys(rewards)) {
-                        addRewardsArray(planetName, nodeName, rotation, rewards[rotation], gameMode, null)
+                        addRewardsArray(planetName, nodeName, rotation, rewards[rotation], gameMode, null, isEvent)
                     }
                 }
             }
@@ -35,9 +35,10 @@ var methods = {
             for (const planetName of Object.keys(t.missionRewards)) {
                 const planet = t.missionRewards[planetName]
                 for (const nodeName of Object.keys(planet)) {
-                    const rewards = planet[nodeName].rewards
-                    const gameMode = planet[nodeName].gameMode
-                    addRewards(planetName, nodeName, rewards, gameMode);
+                    const rewards = planet[nodeName].rewards;
+                    const gameMode = planet[nodeName].gameMode;
+                    const isEvent = planet[nodeName].isEvent;
+                    addRewards(planetName, nodeName, rewards, gameMode, isEvent);
                 }
             }
             for (const bounty of t2.cetusBountyRewards) {

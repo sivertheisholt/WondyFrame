@@ -4,7 +4,7 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
     const helperMethods = require('../Handling/helperMethods');
     const relicImageList = require('../Storage/ImageMapping/relicImage.json');
     
-    function makeEmbed(relicInfo, dropLocations) {
+    function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated) {
         return new Promise((resolve, reject) => {
             relicType = helperMethods.data.makeCapitalFirstLettersFromString(relicType);
             if(relicRefinement == undefined) {
@@ -22,9 +22,9 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
                     image: {
                         url: relicImageList[relicType][relicRefinement],
                     },
-                    timestamp: new Date(),
+                    timestamp: dropTableLastUpdated.modified,
                     footer: {
-                        text: 'Date: '
+                        text: 'Drop tables updated:  '
                     },
                 };
                 for (const reward of relicInfo.rewards[relicRefinement]) {
@@ -68,6 +68,7 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
 
     async function postResult() {
         try {
+            const dropTableLastUpdated = await warframe.data.getBuildInfo();
             const relicInfo = await warframe.data.getRelicInfo(helperMethods.data.makeCapitalFirstLettersFromString(relicType), helperMethods.data.makeCapitalFirstLettersFromString(relicName) + ".json");
             console.log('Searching for relic...');
             let readyTobeUsedData;
@@ -76,7 +77,7 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
             } else {
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic"));
             }
-            const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData);
+            const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated);
             console.log('Making embed...');
             await message.channel.send({ embed: makeEmbedForRelic });
         } catch (err) {

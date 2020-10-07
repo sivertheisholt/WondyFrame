@@ -65,6 +65,15 @@ var methods = {
             }
         })
     },
+    getBuildInfo: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/info.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    }
 }
 
 exports.data = methods;

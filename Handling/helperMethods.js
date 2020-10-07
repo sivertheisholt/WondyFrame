@@ -17,7 +17,6 @@ var methods = {
                 dropChanceFixed = 1 - (chanceIn/100);
                 mathPart1 = Math.pow(dropChanceFixed, expectedRuns);
                 mathPart2 = 1 - mathPart1;
-                console.log(mathPart2);
                 expectedRuns++;
             } while(mathPart2 < 0.9)
         return expectedRuns;

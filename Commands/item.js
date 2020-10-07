@@ -2,63 +2,85 @@ exports.run = (bot, message, itemName, args1, args2, warframeDropLocations, warf
     const Discord = require('discord.js');
     const warframe = require('../Handling/warframeHandler');
     const helperMethods = require('../Handling/helperMethods');
-    
-    function makeEmbed(relicInfo, dropLocations) {
-        return new Promise((resolve, reject) => {
 
-        });
-    }
-
-    function makeEmbedForPrime(relics, dropLocations) {
+    function makeEmbedForPrime(relics, dropLocations, dropTableLastUpdated) {
         return new Promise((resolve, reject) => {
             if(relics == undefined) {
                 reject("Sorry this item does not exist")
             }
-            for(x of relics ) {
-                //console.log(dropLocations.get(x.tier + " " + x.relicName))
-                if(dropLocations.get(x.tier + " " + x.relicName) !== undefined) {
-                    x.vaulted = "No";
+            let isVaulted = true;
+            for(relic of relics) {
+                if(dropLocations.get(`${relic.tier} ${relic.relicName} Relic`) !== undefined) {
+                    relic.vaulted = "No";
+                    isVaulted = false;
                 } else {
-                    x.vaulted = "Yes";
+                    relic.vaulted = "Yes";
                 }
             }
             const primeEmbed = {
                 color: 0x0099ff,
                 title: helperMethods.data.makeCapitalFirstLettersFromString(itemName),
+                thumbnail: {
+                    url: 'https://vignette.wikia.nocookie.net/warframe/images/a/a8/IvaraPrime.png',
+                },
                 fields: [],
-                image: {
-                    url: 'https://vignette.wikia.nocookie.net/warframe/images/f/f8/GenericWeaponPrimeBlade.png',
-                },
-                timestamp: new Date(),
-                footer: {
-                    text: 'Date: '
-                },
+                /* image: {
+                    url: 'https://vignette.wikia.nocookie.net/warframe/images/a/a8/IvaraPrime.png',
+                }, */
+                timestamp: dropTableLastUpdated.modified,
+                    footer: {
+                        text: 'Drop tables updated:  '
+                    },
             };
             for (relic of relics) {
                 if(relic.state == "Intact") {
                     primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + relic.chance + " %" + "\n" + "Vaulted: " + relic.vaulted, inline: true,})
                 }
             }
+
+            if(!isVaulted) {
+                for(relic of relics) {
+                    if(relic.state == "Intact" && relic.vaulted == "No") {
+                        let getDropLocations = dropLocations.get(`${relic.tier} ${relic.relicName} Relic`);
+                        let sortedAfterChance = getTopThree(getDropLocations);
+                        let counterMaxThree = 0;
+                        primeEmbed.fields.push({name: '\u200B', value: `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, inline: false,});
+                        for(location of sortedAfterChance) {
+                            if(counterMaxThree == 6) {
+                                break;
+                            }
+                            if(!location.isEvent) {
+                                primeEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + location.chance + "%", inline: true,})
+                                console.log(location);
+                                counterMaxThree++;
+                            }
+                        }
+                    }
+                }
+            }
             resolve(primeEmbed);
         });
     }
-    function makeEmbedForNonPrime(dropLocations) {
+    function makeEmbedForNonPrime(dropLocations, dropTableLastUpdated) {
         return new Promise((resolve, reject) => {
             const nonPrimeEmbed = {
                 color: 0x0099ff,
                 title: helperMethods.data.makeCapitalFirstLettersFromString(itemName),
+                thumbnail: {
+                    url: 'https://vignette.wikia.nocookie.net/warframe/images/e/e0/Systems.png',
+                },
                 fields: [{
                     name: `\u200B`,
                     value: `**Top 12 drop locations**`,
                     inline: false,
                 }],
-                image: {
+                /* image: {
                     url: 'https://vignette.wikia.nocookie.net/warframe/images/e/e0/Systems.png',
-                },
-                timestamp: new Date(),
-                footer: {
-                    text: 'Date: '
-                },
+                }, */
+                timestamp: dropTableLastUpdated.modified,
+                    footer: {
+                        text: 'Drop tables updated:  '
+                    },
             };
             let counter = 0;
             for(location of dropLocations) {
@@ -89,17 +111,29 @@ exports.run = (bot, message, itemName, args1, args2, warframeDropLocations, warf
         })
     }
 
+    function getTopThree(dropLocations) {
+        if(dropLocations == undefined) {
+            return "No drop locations"
+        } else {
+            dropLocations.sort((a, b) => {
+                return b.chance - a.chance
+            });
+            return dropLocations;
+        }
+    }
+
     async function postResult() {
         try {
+            const dropTableLastUpdated = await warframe.data.getBuildInfo();
             if(itemName.search("prime") !== -1) {
                 //For prime items here
-                const makeEmbedForPrimeResult = await makeEmbedForPrime(warframeRelicInfo.get(itemName), warframeDropLocations);
+                const makeEmbedForPrimeResult = await makeEmbedForPrime(warframeRelicInfo.get(itemName), warframeDropLocations, dropTableLastUpdated);
                 await message.channel.send({ embed: makeEmbedForPrimeResult });
             } else {
                 //For non prime items here
                 const getDropLocationsForItem = await warframeDropLocations.get(helperMethods.data.makeCapitalFirstLettersFromString(itemName));
                 const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
-                const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(readyTobeUsedData)
+                const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(readyTobeUsedData, dropTableLastUpdated)
                 message.channel.send({ embed: makeEmbedForNonPrimeResult });
             }
         } catch(err) {
