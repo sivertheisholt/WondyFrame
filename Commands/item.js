@@ -1,114 +1,124 @@
-exports.run = (bot, message, itemName, args1, args2, warframeDropLocations, warframeRelicInfo) => {
+exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations, warframeRelicInfo) => {
     const Discord = require('discord.js');
     const warframe = require('../Handling/warframeHandler');
     const helperMethods = require('../Handling/helperMethods');
+    const fetch = require('node-fetch');
 
-    function makeEmbedForPrime(relics, dropLocations, dropTableLastUpdated) {
-        return new Promise((resolve, reject) => {
-            if(relics == undefined) {
-                reject("Sorry this item does not exist")
+    async function makeEmbedForPrime(relics, dropLocations, dropTableLastUpdated) {
+        if(relics == undefined) {
+            throw (`Sorry I can't find any information on: ${itemName}`);
+        }
+        if(showVaulted == undefined) {
+            showVaulted = "no";
+        }
+        let isVaulted = true;
+        for(relic of relics) {
+            if(dropLocations.get(`${relic.tier} ${relic.relicName} Relic`) !== undefined) {
+                relic.vaulted = "No";
+                isVaulted = false;
+            } else {
+                relic.vaulted = "Yes";
             }
-            let isVaulted = true;
-            for(relic of relics) {
-                if(dropLocations.get(`${relic.tier} ${relic.relicName} Relic`) !== undefined) {
-                    relic.vaulted = "No";
-                    isVaulted = false;
-                } else {
-                    relic.vaulted = "Yes";
-                }
-            }
-            const primeEmbed = {
-                color: 0x0099ff,
-                title: helperMethods.data.makeCapitalFirstLettersFromString(itemName),
-                thumbnail: {
-                    url: 'https://vignette.wikia.nocookie.net/warframe/images/a/a8/IvaraPrime.png',
+        }
+        const primeEmbed = {
+            color: 0x0099ff,
+            title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),
+            thumbnail: {
+                url: await getImagePrime(),
+            },
+            description: "",
+            fields: [],
+            timestamp: dropTableLastUpdated.modified,
+                footer: {
+                    text: 'Drop tables updated:  '
                 },
-                fields: [],
-                /* image: {
-                    url: 'https://vignette.wikia.nocookie.net/warframe/images/a/a8/IvaraPrime.png',
-                }, */
-                timestamp: dropTableLastUpdated.modified,
-                    footer: {
-                        text: 'Drop tables updated:  '
-                    },
-            };
+        };
+
+        //Adds relics to find the item in
+        if(!isVaulted) {
             for (relic of relics) {
                 if(relic.state == "Intact") {
-                    primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + relic.chance + " %" + "\n" + "Vaulted: " + relic.vaulted, inline: true,})
-                }
-            }
-
-            if(!isVaulted) {
-                for(relic of relics) {
-                    if(relic.state == "Intact" && relic.vaulted == "No") {
-                        let getDropLocations = dropLocations.get(`${relic.tier} ${relic.relicName} Relic`);
-                        let sortedAfterChance = getTopThree(getDropLocations);
-                        let counterMaxThree = 0;
-                        primeEmbed.fields.push({name: '\u200B', value: `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, inline: false,});
-                        for(location of sortedAfterChance) {
-                            if(counterMaxThree == 6) {
-                                break;
-                            }
-                            if(!location.isEvent) {
-                                primeEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + location.chance + "%", inline: true,})
-                                console.log(location);
-                                counterMaxThree++;
-                            }
+                    if(showVaulted == "yes") {
+                        primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + (relic.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}` + "\n" + "Vaulted: " + relic.vaulted, inline: true,});
+                    } else {
+                        if(relic.vaulted == "No") {
+                            primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + (relic.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}` + "\n" + "Vaulted: " + relic.vaulted, inline: true,});
                         }
                     }
                 }
             }
-            resolve(primeEmbed);
-        });
-    }
-    function makeEmbedForNonPrime(dropLocations, dropTableLastUpdated) {
-        return new Promise((resolve, reject) => {
-            const nonPrimeEmbed = {
-                color: 0x0099ff,
-                title: helperMethods.data.makeCapitalFirstLettersFromString(itemName),
-                thumbnail: {
-                    url: 'https://vignette.wikia.nocookie.net/warframe/images/e/e0/Systems.png',
-                },
-                fields: [{
-                    name: `\u200B`,
-                    value: `**Top 12 drop locations**`,
-                    inline: false,
-                }],
-                /* image: {
-                    url: 'https://vignette.wikia.nocookie.net/warframe/images/e/e0/Systems.png',
-                }, */
-                timestamp: dropTableLastUpdated.modified,
-                    footer: {
-                        text: 'Drop tables updated:  '
-                    },
-            };
-            let counter = 0;
-            for(location of dropLocations) {
-                if(counter == 12) {
-                    break;
+        } else {
+            primeEmbed.description = "```This item is currently vaulted!```";
+            for (relic of relics) {
+                if(relic.state == "Intact") {
+                    primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + (relic.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}` + "\n" + "Vaulted: " + relic.vaulted, inline: true,});
                 }
-                nonPrimeEmbed.fields.push({name: (location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), value: "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${location.blueprintDropChance/100*location.chance} %` : `Chance: ${location.chance} %`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, inline: true,})
-                counter++
             }
-            resolve(nonPrimeEmbed);
-        })
+        }
+        
+        //Adds drop locations
+        if(!isVaulted) {
+            for(relic of relics) {
+                if(relic.state == "Intact" && relic.vaulted == "No") {
+                    let getDropLocations = dropLocations.get(`${relic.tier} ${relic.relicName} Relic`);
+                    let sortedAfterChance = await getTopThree(getDropLocations);
+                    let counterMaxThree = 0;
+                    primeEmbed.fields.push({name: '\u200B', value: `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, inline: false,});
+                    for(location of sortedAfterChance) {
+                        if(counterMaxThree == 6) {
+                            break;
+                        }
+                        if(!location.isEvent) {
+                            primeEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`, inline: true,});
+                            counterMaxThree++;
+                        }
+                    }
+                }
+            }
+        }
+        return primeEmbed;
+    }
+    async function makeEmbedForNonPrime(dropLocations, dropTableLastUpdated) {
+        const nonPrimeEmbed = {
+            color: 0x0099ff,
+            title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),
+            thumbnail: {
+                url: await getImageUrlNonPrime(),
+            },
+            fields: [{
+                name: `\u200B`,
+                value: `**Top 12 drop locations**`,
+                inline: false,
+            }],
+            timestamp: dropTableLastUpdated.modified,
+                footer: {
+                    text: 'Drop tables updated:  '
+                },
+        };
+        let counter = 0;
+        for(location of dropLocations) {
+            if(counter == 12) {
+                break;
+            }
+            nonPrimeEmbed.fields.push({name: (location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), value: "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${(location.blueprintDropChance/100*location.chance).toFixed(3)}%` : `Chance: ${location.chance.toFixed(3)}%`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, inline: true,});
+            counter++;
+        }
+        return nonPrimeEmbed;
     }
 
     function getTopNine(dropLocations) {
-        return new Promise((resolve, reject) => {
-            try {
-                if(dropLocations == undefined) {
-                    resolve("Vaulted")
+        if(dropLocations == undefined) {
+            return (`Sorry I can't find any drop locations for: ${itemName}`);
+        } else {
+            dropLocations.sort((a, b) => {
+                if(a.blueprintDropChance == null) {
+                    return b.chance - a.chance;
                 } else {
-                    dropLocations.sort((a, b) => {
-                        return b.chance - a.chance;
-                    });
-                    resolve(dropLocations);
+                    return (b.blueprintDropChance/100*b.chance) - (a.blueprintDropChance/100*a.chance);
                 }
-            } catch (err) {
-                reject(err);
-            }
-        })
+            });
+            return dropLocations;
+        }
     }
 
     function getTopThree(dropLocations) {
@@ -122,6 +132,65 @@ exports.run = (bot, message, itemName, args1, args2, warframeDropLocations, warf
         }
     }
 
+    function imageExists(url){
+        return fetch(url).then(res=>{
+            if(res.status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        })
+    }
+
+    async function getImagePrime() {
+        let counterStop = 3;
+        let newName = itemName.split(' ');
+        let baseUrl = `https://cdn.warframestat.us/img/`;
+        let counter = 0;
+        if(itemName.search("blueprint") !== -1) {
+            counterStop = 3;
+        }
+        for(const parts of newName) {
+            if(counter == counterStop) {
+                break;
+            }
+            baseUrl += parts + "-";
+            counter++;
+        }
+        baseUrl = baseUrl.slice(0, -1);
+        const test = await imageExists(baseUrl + ".png");
+        if(test) {
+            return baseUrl + ".png";
+        } else {
+            return baseUrl + ".jpg"
+        }
+    }
+
+    async function getImageUrlNonPrime() {
+        let counterStop = 3;
+        if(itemName.search("blueprint") !== -1) {
+            counterStop = 1;
+        }
+        let newName = itemName.split(' ');
+        let baseUrl = `https://cdn.warframestat.us/img/`
+        let counter = 0;
+        for(const parts of newName) {
+            if(counter == counterStop)  {
+                break;
+            }
+            baseUrl += parts + "-";
+            counter++;
+        }
+        baseUrl = baseUrl.slice(0, -1);
+
+        const test = await imageExists(baseUrl + ".png");
+        if(test) {
+            return baseUrl + ".png";
+        } else {
+            return baseUrl + ".jpg"
+        }
+    }
+    
     async function postResult() {
         try {
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
@@ -132,13 +201,20 @@ exports.run = (bot, message, itemName, args1, args2, warframeDropLocations, warf
             } else {
                 //For non prime items here
                 const getDropLocationsForItem = await warframeDropLocations.get(helperMethods.data.makeCapitalFirstLettersFromString(itemName));
+                if(getDropLocationsForItem == undefined) {
+                    throw `Sorry I can't find any information on: ${itemName}`;
+                }
                 const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
                 const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(readyTobeUsedData, dropTableLastUpdated)
-                message.channel.send({ embed: makeEmbedForNonPrimeResult });
+                await message.channel.send({ embed: makeEmbedForNonPrimeResult });
             }
         } catch(err) {
             message.channel.send(err);
         }
     }
-    postResult();
+    if(itemName !== undefined) {
+        postResult();
+    } else {
+        message.channel.send("You didn't write the command correctly. Please check !help");
+    }
 }

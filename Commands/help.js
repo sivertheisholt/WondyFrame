@@ -16,12 +16,12 @@ exports.run = (bot, message, args, func) => {
             if (commands[cmd].group.toUpperCase() === 'USER') {
                 commandsFound++
 
-                embed.addField(`${commands[cmd].name}`, `**Description:** ${commands[cmd].desc}\n**Usage:** ${prefix + commands[cmd].usage}`, true);
+                embed.addField(`${commands[cmd].name}`, `**Description:** ${commands[cmd].desc}\n**Usage:** ${prefix + commands[cmd].usage}`, false);
             }
         } else if (commands[cmd].group.toLowerCase() === args[0]) {
             commandsFound++
 
-            embed.addField(`${commands[cmd].name}`, `**Description:** ${commands[cmd].desc}\n**Usage:** ${prefix + commands[cmd].usage}`, true);
+            embed.addField(`${commands[cmd].name}`, `**Description:** ${commands[cmd].desc}\n**Usage:** ${prefix + commands[cmd].usage}`, false);
         }
     }
 

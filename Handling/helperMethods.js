@@ -6,7 +6,17 @@ var methods = {
             if(x == Number) {
                 stringOut.push(x)
             } else {
-                stringOut.push(x.charAt(0).toUpperCase() + x.slice(1))
+                if(x.search("-") !== -1) {
+
+                    let getDashArray = x.split("-");
+                    let finalizedDashArray = [];
+                    for(dashes of getDashArray) {
+                        finalizedDashArray.push(dashes.charAt(0).toUpperCase() + dashes.slice(1));
+                    }
+                    stringOut.push(finalizedDashArray.join("-"));
+                } else {
+                    stringOut.push(x.charAt(0).toUpperCase() + x.slice(1))
+                }
             }
         }
         return stringOut.join(" ").trim();

@@ -1,16 +1,25 @@
 const warframe = require('../Handling/warframeHandler');
 var methods = {
-    sortData: async function (t, t2, t3, t4, t5) {
+    sortData: async function (t, t2, t3, t4, t5, t6, t7, t8, t9) {
         return new Promise((resolve, reject) => {
             const map = new Map()
             const addRewardsArray = (planet, node, rotation, rewards, gameMode, blueprintDropChance, isEvent) => {
                 for (const reward of rewards) {
-                    let r = map.get(reward.itemName)
-                    if (!r) {
-                        r = []
-                        map.set(reward.itemName, r)
+                    if(reward.itemName !== undefined) {
+                        let r = map.get(reward.itemName)
+                        if (!r) {
+                            r = []
+                            map.set(reward.itemName, r)
+                        }
+                        r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
+                    } else {
+                        let r = map.get(reward.modName)
+                        if (!r) {
+                            r = []
+                            map.set(reward.modName, r)
+                        }
+                        r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
                     }
-                    r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
                 }
             }
             const addRewards = (planetName, nodeName, rewards, gameMode, isEvent) => {
@@ -22,7 +31,7 @@ var methods = {
                     }
                 }
             }
-            const addRewardsBlueprintEnemy = (planetName, nodeName, rewards, gameMode, blueprintDropChance) => {
+            const addRewardsEnemy = (planetName, nodeName, rewards, gameMode, blueprintDropChance) => {
                 if (Array.isArray(rewards)) {
                     addRewardsArray(planetName, nodeName, null, rewards, gameMode, blueprintDropChance)
                 } else {
@@ -51,8 +60,21 @@ var methods = {
                 addRewards("Deimos", bounty.bountyLevel, bounty.rewards, "Bounty");
             }
             for(const enemyBlueprintDrop of t5.enemyBlueprintTables) {
-                addRewardsBlueprintEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance.slice(4))
+                addRewardsEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance.slice(4));
             }
+            for(const transientRewards of t6.transientRewards) {
+                addRewards(transientRewards.objectiveName, null, transientRewards.rewards, "Transient", null);
+            }
+            for(const enemyModDrop of t7.enemyModTables) {
+                addRewardsEnemy(enemyModDrop.enemyName, null, enemyModDrop.mods, "Enemy", enemyModDrop.enemyModDropChance);
+            }
+            for(const miscItem of t8.miscItems) {
+                addRewardsEnemy(miscItem.enemyName, null, miscItem.items, "Enemy", miscItem.enemyItemDropChance);
+            }
+            /* for(const sortieReward of t9.sortieRewards) {
+                addRewards("Sortie", null, sortieReward, "Sortie");
+            } */
+            
             resolve(map);
         })
     },

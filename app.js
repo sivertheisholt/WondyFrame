@@ -16,31 +16,42 @@ const cli = new Discord.Client({ autoReconnect: true });
 //Token
 const token = process.env.DISCORD_TOKEN;
 
-const prefix = '!';
-
-bot.on('message', async message => {
-    messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo);
-});
+const prefix = '-';
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     bot.user.setActivity('!help')
     setInterval(function() {
-        sortData()
+        sortData();
     }, 10000000)
-})
+});
+
+bot.on('message', message => {
+    if(warframeDropInfo == undefined && warframeRelicInfo == undefined) {
+        message.channel.send("Bot is not ready yet");
+        return;
+    } else {
+        messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo);
+    }
+});
 
 async function sortData() {
     try {
+        console.log("Getting mission rewards and relic rewards...");
         let getWarframeData = await warframe.data.getMissionRewards();
         let getWarframeRelicData = await warframe.data.getAllRelicInfo();
         let getWarframeCetusBountyRewards = await warframe.data.getCetusBountyRewards();
         let getWarframeFortunaBountyRewards = await warframe.data.getFortunaBountyRewards();
         let getWarframeDeimosBountyRewards = await warframe.data.getDeimosBountyRewards();
         let getEnemyBlueprintDrops = await warframe.data.getEnemyBlueprintDrops();
-        console.log("Getting mission rewards and relic rewards...");
-        warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops);
+        let getTransientRewards = await warframe.data.getTransientRewards();
+        let getEnemyModDrops = await warframe.data.getEnemyModDrops();
+        let getMiscItemDrops = await warframe.data.getMiscDrops();
+        let getSortieRewards = await warframe.data.getSortieRewards();
+        warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops, getTransientRewards, getEnemyModDrops, getMiscItemDrops, getSortieRewards);
+        console.log("Done getting mission rewards and relic rewards!")
         warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
+        
     } catch(err) {
         console.log(err);
     }   

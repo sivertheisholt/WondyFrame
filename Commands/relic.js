@@ -19,7 +19,7 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
                     title: relicInfo.tier + " " + relicInfo.name + " " + relicRefinement,
                     description: "https://warframe.fandom.com/wiki/" + relicInfo.tier + "_" + relicInfo.name,
                     fields: [],
-                    image: {
+                    thumbnail: {
                         url: relicImageList[relicType][relicRefinement],
                     },
                     timestamp: dropTableLastUpdated.modified,
@@ -70,7 +70,6 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
         try {
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
             const relicInfo = await warframe.data.getRelicInfo(helperMethods.data.makeCapitalFirstLettersFromString(relicType), helperMethods.data.makeCapitalFirstLettersFromString(relicName) + ".json");
-            console.log('Searching for relic...');
             let readyTobeUsedData;
             if(relicRefinement !== undefined) {
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic " + "("+helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement)+")"));
@@ -78,7 +77,6 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic"));
             }
             const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated);
-            console.log('Making embed...');
             await message.channel.send({ embed: makeEmbedForRelic });
         } catch (err) {
             message.channel.send(err);
@@ -88,7 +86,7 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
     if(relicType !== undefined && relicName !== undefined) {
         postResult();
     } else {
-        message.channel.send("You didn't write the command correctly. Please check !help")
+        message.channel.send("You didn't write the command correctly. Please check !help");
     }
 }
 

@@ -65,6 +65,42 @@ var methods = {
             }
         })
     },
+    getTransientRewards: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/transientRewards.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getEnemyModDrops: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/enemyModTables.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getMiscDrops: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/miscItems.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
+    getSortieRewards: function() {
+        return new Promise((resolve, reject) => {
+            try {
+                resolve(warframe.getData(`/data/sortieRewards.json`));
+            } catch (err) {
+                reject(err);
+            }
+        })
+    },
     getBuildInfo: function() {
         return new Promise((resolve, reject) => {
             try {
@@ -73,9 +109,12 @@ var methods = {
                 reject(err);
             }
         })
-    }
+    },
 }
 
 exports.data = methods;
+
+
+
 
 

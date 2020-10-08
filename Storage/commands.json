@@ -2,13 +2,19 @@
   "Help": {
     "name": "Help",
     "group": "User",
-    "desc": "Showing a list of all commands. <Required> / [Optional]",
+    "desc": "Showing a list of all commands. <Required> / [Optional] - Accepted values for optional will be in ()",
     "usage": "help [group OR command]"
   },
   "Relic": {
     "name": "Relic",
     "group": "User",
     "desc": "Search for relic information",
-    "usage": "relic <Relic Name> [Refinement]"
+    "usage": "Relic <Relic Name> [Refinement (Radiant / Flawless / Exceptional / Intact)]"
+  },
+  "Item": {
+    "name": "Item",
+    "group": "User",
+    "desc": "Search for item. Make sure the item name is exact!",
+    "usage": "Item <Item Name> [Vaulted (Yes / No)]"
   }
 }
