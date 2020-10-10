@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: 
+    - master
+
+jobs:
+  WondyBot_Job:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: WondyFrame
+      env:
+        DOCKER_HUB_LOGIN: ${{ secrets.DOCKER_HUB_LOGIN }}
+        DOCKER_HUB_PW: ${{ secrets.DOCKER_HUB_PW }} 
+      run: |
+        echo 'Docker login'
+        docker login -u  $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PW
+        echo 'Running build'
+        docker build . -f ./docker-action/dockerfile -t wondyframe
+        docker tag wondyframe wondercrack/wondyframe
+        echo 'Pushing image'
+        docker push wondercrack/wondyframe
