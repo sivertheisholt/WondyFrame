@@ -16,5 +16,11 @@
     "group": "User",
     "desc": "Search for item. Make sure the item name is exact!",
     "usage": "Item <Item Name> [Vaulted (Yes / No)]"
+  },
+  "Baro": {
+    "name": "Baro",
+    "group": "User",
+    "desc": "Show current information about Baro Ki'Teer",
+    "usage": "Baro"
   }
 }

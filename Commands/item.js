@@ -4,16 +4,17 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
     const helperMethods = require('../Handling/helperMethods');
     const fetch = require('node-fetch');
 
-    async function makeEmbedForPrime(relics, dropLocations, dropTableLastUpdated) {
+    async function makeEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdated) {
         if(relics == undefined) {
-            throw (`Sorry I can't find any information on: ${itemName}`);
+            throw (`Sorry I can't find any drop locations for: ${itemName}`);
         }
         if(showVaulted == undefined) {
             showVaulted = "no";
         }
         let isVaulted = true;
         for(relic of relics) {
-            if(dropLocations.get(`${relic.tier} ${relic.relicName} Relic`) !== undefined) {
+            if(dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`) !== undefined) {
+                console.log(relic);
                 relic.vaulted = "No";
                 isVaulted = false;
             } else {
@@ -24,7 +25,7 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
             color: 0x0099ff,
             title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),
             thumbnail: {
-                url: await getImagePrime(),
+                url: await getImagePrime(itemName),
             },
             description: "",
             fields: [],
@@ -48,7 +49,7 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
                 }
             }
         } else {
-            primeEmbed.description = "```This item is currently vaulted!```";
+            primeEmbed.description = "**This item is vaulted or Digital Extreme didn't update the drop table yet.**";
             for (relic of relics) {
                 if(relic.state == "Intact") {
                     primeEmbed.fields.push({name: relic.tier + " " + relic.relicName, value: "Rarity: " + relic.rarity + "\n" + "Chance: " + (relic.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}` + "\n" + "Vaulted: " + relic.vaulted, inline: true,});
@@ -60,7 +61,7 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
         if(!isVaulted) {
             for(relic of relics) {
                 if(relic.state == "Intact" && relic.vaulted == "No") {
-                    let getDropLocations = dropLocations.get(`${relic.tier} ${relic.relicName} Relic`);
+                    let getDropLocations = dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`);
                     let sortedAfterChance = await getTopThree(getDropLocations);
                     let counterMaxThree = 0;
                     primeEmbed.fields.push({name: '\u200B', value: `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, inline: false,});
@@ -78,12 +79,12 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
         }
         return primeEmbed;
     }
-    async function makeEmbedForNonPrime(dropLocations, dropTableLastUpdated) {
+    async function makeEmbedForNonPrime(itemName, dropLocations, dropTableLastUpdated) {
         const nonPrimeEmbed = {
             color: 0x0099ff,
             title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),
             thumbnail: {
-                url: await getImageUrlNonPrime(),
+                url: await getImageUrlNonPrime(itemName),
             },
             fields: [{
                 name: `\u200B`,
@@ -142,13 +143,15 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
         })
     }
 
-    async function getImagePrime() {
+    async function getImagePrime(itemName) {
         let counterStop = 3;
         let newName = itemName.split(' ');
         let baseUrl = `https://cdn.warframestat.us/img/`;
         let counter = 0;
         if(itemName.search("blueprint") !== -1) {
             counterStop = 3;
+        } else {
+            counterStop = 2;
         }
         for(const parts of newName) {
             if(counter == counterStop) {
@@ -166,7 +169,7 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
         }
     }
 
-    async function getImageUrlNonPrime() {
+    async function getImageUrlNonPrime(itemName) {
         let counterStop = 3;
         if(itemName.search("blueprint") !== -1) {
             counterStop = 1;
@@ -193,23 +196,34 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
     
     async function postResult() {
         try {
+            message.channel.startTyping();
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
             if(itemName.search("prime") !== -1) {
                 //For prime items here
-                const makeEmbedForPrimeResult = await makeEmbedForPrime(warframeRelicInfo.get(itemName), warframeDropLocations, dropTableLastUpdated);
+                const tryToFindKey = await helperMethods.data.searchForItemInMap(itemName, warframeRelicInfo);
+                if(tryToFindKey == undefined) {
+                    message.channel.stopTyping();
+                    throw `Sorry I can't find any drop locations for: ${itemName}`;
+                }
+                const makeEmbedForPrimeResult = await makeEmbedForPrime(tryToFindKey, warframeRelicInfo.get(tryToFindKey), warframeDropLocations, dropTableLastUpdated);
                 await message.channel.send({ embed: makeEmbedForPrimeResult });
+                message.channel.stopTyping();
             } else {
                 //For non prime items here
-                const getDropLocationsForItem = await warframeDropLocations.get(helperMethods.data.makeCapitalFirstLettersFromString(itemName));
-                if(getDropLocationsForItem == undefined) {
-                    throw `Sorry I can't find any information on: ${itemName}`;
+                const tryToFindKey = await helperMethods.data.searchForItemInMap(itemName, warframeDropLocations);
+                if(tryToFindKey == undefined) {
+                    message.channel.stopTyping();
+                    throw `Sorry I can't find any drop locations for: ${itemName}`;
                 }
+                const getDropLocationsForItem = await warframeDropLocations.get(tryToFindKey);
                 const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
-                const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(readyTobeUsedData, dropTableLastUpdated)
+                const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(tryToFindKey, readyTobeUsedData, dropTableLastUpdated)
                 await message.channel.send({ embed: makeEmbedForNonPrimeResult });
+                message.channel.stopTyping();
             }
         } catch(err) {
             message.channel.send(err);
+            message.channel.stopTyping();
         }
     }
     if(itemName !== undefined) {

@@ -4,72 +4,64 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
     const helperMethods = require('../Handling/helperMethods');
     const relicImageList = require('../Storage/ImageMapping/relicImage.json');
     
-    function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated) {
-        return new Promise((resolve, reject) => {
-            relicType = helperMethods.data.makeCapitalFirstLettersFromString(relicType);
-            if(relicRefinement == undefined) {
-                relicRefinement = "Intact";
+    async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated) {
+        relicType = await helperMethods.data.makeCapitalFirstLettersFromString(relicType);
+        if(relicRefinement == undefined) {
+            relicRefinement = "Intact";
+        }
+        relicRefinement = await helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement);
+        if(relicRefinement !== "Radiant" && relicRefinement !== "Flawless" && relicRefinement !== "Exceptional" && relicRefinement !== "Intact") {
+            throw  relicRefinement + " is not an accepted refinement type";
+        } else {
+            const relicEmbed = {
+                color: 0x0099ff,
+                title: relicInfo.tier + " " + relicInfo.name + " " + relicRefinement,
+                description: "https://warframe.fandom.com/wiki/" + relicInfo.tier + "_" + relicInfo.name,
+                fields: [],
+                thumbnail: {
+                    url: relicImageList[relicType][relicRefinement],
+                },
+                timestamp: dropTableLastUpdated.modified,
+                footer: {
+                    text: 'Drop tables updated:  '
+                },
+            };
+            for (const reward of relicInfo.rewards[relicRefinement]) {
+                relicEmbed.fields.push({name: reward.itemName, value: "Rarity: " + reward.rarity + '\n' + "Chance: " + (reward.chance).toFixed(2) + " %", inline: true,})
             }
-            relicRefinement = helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement);
-            if(relicRefinement !== "Radiant" && relicRefinement !== "Flawless" && relicRefinement !== "Exceptional" && relicRefinement !== "Intact") {
-                reject(relicRefinement + " is not an accepted refinement type")
-            } else {
-                const relicEmbed = {
-                    color: 0x0099ff,
-                    title: relicInfo.tier + " " + relicInfo.name + " " + relicRefinement,
-                    description: "https://warframe.fandom.com/wiki/" + relicInfo.tier + "_" + relicInfo.name,
-                    fields: [],
-                    thumbnail: {
-                        url: relicImageList[relicType][relicRefinement],
-                    },
-                    timestamp: dropTableLastUpdated.modified,
-                    footer: {
-                        text: 'Drop tables updated:  '
-                    },
-                };
-                for (const reward of relicInfo.rewards[relicRefinement]) {
-                    relicEmbed.fields.push({name: reward.itemName, value: "Rarity: " + reward.rarity + '\n' + "Chance: " + reward.chance + " %", inline: true,})
-                }
-                if(dropLocations !== "Vaulted") {
-                        relicEmbed.fields.push({name: `\u200B`, value: `**Top 9 drop locations**`, inline: false,})
-                        let counter = 0;
-                    for (const location of dropLocations) {
-                        if(counter == 9) {
-                            break;
-                        }
-                        relicEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + location.chance + " %", inline: true,})
-                        counter++;
+            if(dropLocations !== "Vaulted") {
+                    relicEmbed.fields.push({name: `\u200B`, value: `**Top 9 drop locations**`, inline: false,})
+                    let counter = 0;
+                for (const location of dropLocations) {
+                    if(counter == 9) {
+                        break;
                     }
-                } else {
-                    relicEmbed.fields.push({name: '\u200B', value: `**This relic is either vaulted, Digital Extreme didn't update the drop table yet or this item don't have any drop locations**`, inline: false})
+                    relicEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(2) + " %", inline: true,})
+                    counter++;
                 }
-                
-                resolve(relicEmbed);
+            } else {
+                relicEmbed.fields.push({name: '\u200B', value: `**This relic is either vaulted, Digital Extreme didn't update the drop table yet or this item don't have any drop locations**`, inline: false})
             }
-        });
+            return relicEmbed;
+        }
     }
 
     function getTopNine(dropLocations) {
-        return new Promise((resolve, reject) => {
-            try {
-                if(dropLocations == undefined) {
-                    resolve("Vaulted")
-                } else {
-                    dropLocations.sort((a, b) => {
-                        return b.chance - a.chance;
-                    });
-                    resolve(dropLocations);
-                }
-            } catch (err) {
-                reject(err);
-            }
-        })
+        if(dropLocations == undefined) {
+            return "Vaulted";
+        } else {
+            dropLocations.sort((a, b) => {
+                return b.chance - a.chance;
+            });
+            return dropLocations;
+        }
     }
 
     async function postResult() {
         try {
+            message.channel.startTyping();
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
-            const relicInfo = await warframe.data.getRelicInfo(helperMethods.data.makeCapitalFirstLettersFromString(relicType), helperMethods.data.makeCapitalFirstLettersFromString(relicName) + ".json");
+            const relicInfo = await warframe.data.getRelicInfo(helperMethods.data.makeCapitalFirstLettersFromString(relicType), helperMethods.data.makeCapitalFirstLettersFromString(relicName) + ".json", `${relicType} ${relicName}`);
             let readyTobeUsedData;
             if(relicRefinement !== undefined) {
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic " + "("+helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement)+")"));
@@ -78,8 +70,10 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
             }
             const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated);
             await message.channel.send({ embed: makeEmbedForRelic });
+            message.channel.stopTyping();
         } catch (err) {
             message.channel.send(err);
+            message.channel.stopTyping();
         }
     }
 

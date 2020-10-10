@@ -2,114 +2,45 @@ const Warframe = require('../api/warframe.js');
 const warframe = new Warframe();
 
 var methods = {
-    getRelicInfo: function (tier, name) {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/relics/${tier}/${name}`));
-            } catch (err) {
-                reject(err);
-            }
-        });
+    getRelicInfo: async function (tier, name, itemName) {
+        return await warframe.getData(`/data/relics/${tier}/${name}`, itemName);
     },
-    getMissionRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/missionRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getMissionRewards: async function() {
+        return await warframe.getData(`/data/missionRewards.json`);
     },
-    getAllRelicInfo: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/relics.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getAllRelicInfo: async function() {
+        return await warframe.getData(`/data/relics.json`);
     },
-    getCetusBountyRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/cetusBountyRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getCetusBountyRewards: async function() {
+        return await warframe.getData(`/data/cetusBountyRewards.json`);
     },
-    getFortunaBountyRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/solarisBountyRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getFortunaBountyRewards: async function() {
+        return await warframe.getData(`/data/solarisBountyRewards.json`);
     },
-    getDeimosBountyRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/deimosRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getDeimosBountyRewards: async function() {
+        return await warframe.getData(`/data/deimosRewards.json`)
     },
-    getEnemyBlueprintDrops: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/enemyBlueprintTables.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getEnemyBlueprintDrops: async function() {
+        return await warframe.getData(`/data/enemyBlueprintTables.json`);
     },
-    getTransientRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/transientRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getTransientRewards: async function() {
+        return await warframe.getData(`/data/transientRewards.json`);
     },
-    getEnemyModDrops: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/enemyModTables.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getEnemyModDrops: async function() {
+        return await warframe.getData(`/data/enemyModTables.json`);
     },
-    getMiscDrops: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/miscItems.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getMiscDrops: async function() {
+        return await warframe.getData(`/data/miscItems.json`);
     },
-    getSortieRewards: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/sortieRewards.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getSortieRewards: async function() {
+        return await warframe.getData(`/data/sortieRewards.json`);
     },
-    getBuildInfo: function() {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(warframe.getData(`/data/info.json`));
-            } catch (err) {
-                reject(err);
-            }
-        })
+    getBuildInfo: async function() {
+        return await warframe.getData(`/data/info.json`);
     },
+    getWorldState: async function() {
+        return await warframe.getWorldState();
+    }
 }
 
 exports.data = methods;

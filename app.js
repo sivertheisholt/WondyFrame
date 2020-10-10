@@ -1,3 +1,4 @@
+"use strict";
 require('dotenv').config();
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -7,7 +8,7 @@ const warframe = require('./Handling/warframeHandler.js');
 
 const bot = new Discord.Client();
 
-let warframeDropInfo, warframeRelicInfo;
+let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 sortData();
 
 //Reconnect
@@ -31,7 +32,7 @@ bot.on('message', message => {
         message.channel.send("Bot is not ready yet");
         return;
     } else {
-        messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo);
+        messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords);
     }
 });
 
@@ -49,6 +50,7 @@ async function sortData() {
         let getMiscItemDrops = await warframe.data.getMiscDrops();
         let getSortieRewards = await warframe.data.getSortieRewards();
         warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops, getTransientRewards, getEnemyModDrops, getMiscItemDrops, getSortieRewards);
+        itemKeyWords = warframeDropInfo.keys();
         console.log("Done getting mission rewards and relic rewards!")
         warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
         

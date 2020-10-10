@@ -5,21 +5,13 @@ var methods = {
             const map = new Map()
             const addRewardsArray = (planet, node, rotation, rewards, gameMode, blueprintDropChance, isEvent) => {
                 for (const reward of rewards) {
-                    if(reward.itemName !== undefined) {
-                        let r = map.get(reward.itemName)
-                        if (!r) {
-                            r = []
-                            map.set(reward.itemName, r)
-                        }
-                        r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
-                    } else {
-                        let r = map.get(reward.modName)
-                        if (!r) {
-                            r = []
-                            map.set(reward.modName, r)
-                        }
-                        r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
+                    const name = (reward.itemName || reward.modName).toLowerCase();
+                    let r = map.get(name)
+                    if (!r) {
+                        r = []
+                        map.set(name, r)
                     }
+                    r.push({ isEvent, gameMode, planet, node, rotation, rarity: reward.rarity, chance: reward.chance, blueprintDropChance })
                 }
             }
             const addRewards = (planetName, nodeName, rewards, gameMode, isEvent) => {

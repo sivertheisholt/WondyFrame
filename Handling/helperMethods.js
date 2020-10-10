@@ -30,6 +30,22 @@ var methods = {
                 expectedRuns++;
             } while(mathPart2 < 0.9)
         return expectedRuns;
+    },
+    makeNumberWithCommas: function(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    searchForItemInMap: function(name, dropLocations) {
+        for(const item of dropLocations.keys()) {
+            if(item == name) {
+                return item;
+            }
+        }
+        for(const item of dropLocations.keys()) {
+            if(item.search(name) !== -1) {
+                return item;
+            }
+        }
+        return undefined;
     }
 }
 

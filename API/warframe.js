@@ -5,14 +5,26 @@ var Warframe = function Warframe(token) {
         return new Warframe();
 };
 
-Warframe.prototype.getData = function getData(command, addParams) {
+Warframe.prototype.getData = function getData(command, itemName) {
     return new Promise((resolve, reject) => {
         var url = `https://drops.warframestat.us${command}`;
-        fetch(url).then(async res=>{
+        fetch(url).then(res=>{
             if(res.ok) {
                 resolve(res.json());
             } else {
-                reject("Sorry this item does not exist");
+                reject(`Sorry I can't find any drop locations for: ${itemName}`);
+            }
+        })
+    })
+},
+Warframe.prototype.getWorldState = function getWorldState() {
+    return new Promise((resolve, reject) => {
+        var url = `http://content.warframe.com/dynamic/worldState.php`;
+        fetch(url).then(res=>{
+            if(res.ok) {
+                resolve(res.json());
+            } else {
+                reject(`Sorry can't load worldstate right now`);
             }
         })
     })

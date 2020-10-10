@@ -1,5 +1,5 @@
 var methods = {
-    messageChecker: async function (bot, message, discordUser, prefix, warframeInfo, warframeRelicInfo) {
+    messageChecker: async function (bot, message, discordUser, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
 
         //Check if user is bot or is command
         if (discordUser.bot) { return }
@@ -26,7 +26,7 @@ var methods = {
         //Try to start command
         try {
             let commandFile = require(`../Commands/${command}.js`);
-            await commandFile.run(bot, message, args, args1, args2, warframeInfo, warframeRelicInfo);
+            await commandFile.run(bot, message, args, args1, args2, warframeInfo, warframeRelicInfo, itemKeyWords);
             console.log(message.author.username + " ran the command: " + command);
         } catch (err) {
             message.channel.send("Invalid command! Please check !help")

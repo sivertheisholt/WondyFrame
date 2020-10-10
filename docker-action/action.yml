@@ -1,0 +1,6 @@
+# action.yml
+name: 'WondyFrame'
+description: 'Warframe discord bot'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
