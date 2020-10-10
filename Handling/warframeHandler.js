@@ -1,4 +1,4 @@
-const Warframe = require('../api/warframe.js');
+const Warframe = require('../API/warframe.js');
 const warframe = new Warframe();
 
 var methods = {
