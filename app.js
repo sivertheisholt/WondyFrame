@@ -21,7 +21,7 @@ const prefix = '-';
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    bot.user.setActivity('!help')
+    bot.user.setActivity('-help')
     setInterval(function() {
         sortData();
     }, 10000000)

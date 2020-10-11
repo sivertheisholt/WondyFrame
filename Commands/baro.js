@@ -3,7 +3,7 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     const WorldState = require('warframe-worldstate-parser');
     const helperMethods = require('../Handling/helperMethods');
 
-    async function createEmbed(worldState, dropTableLastUpdated) {
+    async function createEmbed(worldState, worldStateTimestamp) {
         const baroEmbed1 = {
             color: 0x0099ff,
             title: `Baro Ki'Teer`,
@@ -18,9 +18,9 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
                 url: "https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/baro-ki'teer-glyph.png",
             },
             fields: [],
-            timestamp: dropTableLastUpdated.modified,
+            timestamp: worldStateTimestamp,
             footer: {
-                text: 'Drop tables updated:  '
+                text: 'World state updated:'
             },
         };
         
@@ -40,18 +40,23 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
         } else {
             baroEmbed1.fields.push({name: "Location", value: worldState.location, inline: false,});
             baroEmbed1.fields.push({name: "Baro will arrive in", value: worldState.startString, inline: false,});
+            baroEmbed1.timestamp = worldStateTimestamp;
+            baroEmbed1.footer = {text: 'World state updated:'};
         }
         return [baroEmbed1, baroEmbed2];
     }
     
     async function postResult() {
         message.channel.startTyping();
-        const dropTableLastUpdated = await warframe.data.getBuildInfo();
         const worldStateData = await warframe.data.getWorldState();
         const ws = new WorldState(JSON.stringify(worldStateData));
-        const makeBaroEmbed = await createEmbed(ws.voidTrader, dropTableLastUpdated);
-        await message.channel.send({ embed: makeBaroEmbed[0] });
-        await message.channel.send({ embed: makeBaroEmbed[1] });
+        const makeBaroEmbed = await createEmbed(ws.voidTrader, ws.timestamp);
+        if(ws.voidTrader.active) {
+            await message.channel.send({ embed: makeBaroEmbed[0] });
+            await message.channel.send({ embed: makeBaroEmbed[1] });
+        } else {
+            await message.channel.send({ embed: makeBaroEmbed[0] });
+        }
         message.channel.stopTyping();
     }
     postResult();
