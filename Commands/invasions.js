@@ -2,7 +2,7 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     const warframe = require('../Handling/warframeHandler');
     const WorldState = require('warframe-worldstate-parser');
 
-    async function createEmbed(worldState, dropTableLastUpdated) {
+    function createEmbed(worldState, dropTableLastUpdated) {
         const invasionsEmbed = {
             color: 0x0099ff,
             title: `Invasions`,
@@ -18,15 +18,12 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
 
         for(const x of worldState) {
             if(!x.completed) {
-                console.log(x.attackerReward.asString);
                 invasionsEmbed.fields.push({name: `\u200B`, value: `**${x.node}**`, inline: false});
                 invasionsEmbed.fields.push({name: x.attackingFaction, value: x.attackerReward.asString == "" ? "No reward" : x.attackerReward.asString, inline: true});
                 invasionsEmbed.fields.push({name: x.defendingFaction, value: x.defenderReward.asString == "" ? "No reward" : x.defenderReward.asString, inline: true});
                 invasionsEmbed.fields.push({name: "ETA", value: x.eta, inline: true});
             }
         }
-
-
         return invasionsEmbed;
     }
     
@@ -35,7 +32,6 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
         const dropTableLastUpdated = await warframe.data.getBuildInfo();
         const worldStateData = await warframe.data.getWorldState();
         const ws = new WorldState(JSON.stringify(worldStateData));
-        //console.log(ws.invasions[0].attackerReward.asString)
         const makeInvasionsEmbed = await createEmbed(ws.invasions, dropTableLastUpdated);
         await message.channel.send({ embed: makeInvasionsEmbed });
         message.channel.stopTyping();
