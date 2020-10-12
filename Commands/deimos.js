@@ -9,7 +9,7 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
         var seconds = (expiry.getTime() - activation.getTime()) / 1000;
         const cambionEmbed = {
             color: 0x0099ff,
-            title: `Cambion`,
+            title: `Cambion Drift`,
             thumbnail: {
                 url: "https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/heart-of-deimos.png",
             },
