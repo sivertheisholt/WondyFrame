@@ -24,6 +24,11 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
                 name: "Mission 3",
                 value: `Node: ${worldState.variants[2].node} \n Type: ${worldState.variants[2].missionType} \n Modifier: ${worldState.variants[2].modifier} \n Modifier Description: ${worldState.variants[2].modifierDescription}`,
                 inline: false,
+            },
+            {
+                name: "Time left",
+                value: worldState.eta,
+                inline: false,
             }],
             timestamp: worldStateTimestamp,
                 footer: {
@@ -34,12 +39,17 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     }
     
     async function postResult() {
-        message.channel.startTyping();
-        const worldStateData = await warframe.data.getWorldState();
-        const ws = new WorldState(JSON.stringify(worldStateData));
-        const makeSortieEmbed = await createEmbed(ws.sortie, ws.timestamp);
-        await message.channel.send({ embed: makeSortieEmbed });
-        message.channel.stopTyping();
+        try {
+            message.channel.startTyping();
+            const worldStateData = await warframe.data.getWorldState();
+            const ws = new WorldState(JSON.stringify(worldStateData));
+            const makeSortieEmbed = await createEmbed(ws.sortie, ws.timestamp);
+            await message.channel.send({ embed: makeSortieEmbed });
+            message.channel.stopTyping();
+        } catch(err) {
+            message.channel.send(err);
+            message.channel.stopTyping();
+        }
     }
     postResult();
 }
