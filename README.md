@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/aalB0ZK.png" height="200" width="200" alt="Genesis Avatar"/>
 
-### WondyFrame is a [Discord.js](http://discord.js.org) bot for finding information about items or current world state.
+### WondyFrame is a [Discord.js](http://discord.js.org) bot for finding information about items or current world state in Warframe.
 
 ## General Information
 I made WondyFrame for personal use and a learning experience, but I thought I should share it for others to use as well. Few things you can expect about the bot:
