@@ -1,4 +1,4 @@
-# <img src="https://i.imgur.com/aalB0ZK.png" height="200" width="200" alt="Genesis Avatar"/>
+<img src="https://i.imgur.com/aalB0ZK.png" height="200" width="200" alt="Genesis Avatar"/>
 
 ### WondyFrame is a [Discord.js](http://discord.js.org) bot for finding information about items or current world state.
 
