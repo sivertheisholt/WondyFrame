@@ -17,11 +17,11 @@ const cli = new Discord.Client({ autoReconnect: true });
 //Token
 const token = process.env.DISCORD_TOKEN;
 
-const prefix = '-';
+const prefix = 'wf.';
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    bot.user.setActivity('-help')
+    bot.user.setActivity('wf.help')
     setInterval(function() {
         sortData();
     }, 10000000)
@@ -29,7 +29,6 @@ bot.on('ready', () => {
 
 bot.on('message', message => {
     if(warframeDropInfo == undefined && warframeRelicInfo == undefined) {
-        message.channel.send("Bot is not ready yet");
         return;
     } else {
         messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords);
@@ -53,7 +52,6 @@ async function sortData() {
         itemKeyWords = warframeDropInfo.keys();
         console.log("Done getting mission rewards and relic rewards!")
         warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
-        
     } catch(err) {
         console.log(err);
     }   

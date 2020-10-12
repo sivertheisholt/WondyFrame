@@ -28,13 +28,18 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     }
     
     async function postResult() {
-        message.channel.startTyping();
-        const dropTableLastUpdated = await warframe.data.getBuildInfo();
-        const worldStateData = await warframe.data.getWorldState();
-        const ws = new WorldState(JSON.stringify(worldStateData));
-        const makeInvasionsEmbed = await createEmbed(ws.invasions, dropTableLastUpdated);
-        await message.channel.send({ embed: makeInvasionsEmbed });
-        message.channel.stopTyping();
+        try {
+            message.channel.startTyping();
+            const dropTableLastUpdated = await warframe.data.getBuildInfo();
+            const worldStateData = await warframe.data.getWorldState();
+            const ws = new WorldState(JSON.stringify(worldStateData));
+            const makeInvasionsEmbed = await createEmbed(ws.invasions, dropTableLastUpdated);
+            await message.channel.send({ embed: makeInvasionsEmbed });
+            message.channel.stopTyping();
+        } catch(err) {
+            message.channel.send(err);
+            message.channel.stopTyping();
+        }
     }
     postResult();
 }

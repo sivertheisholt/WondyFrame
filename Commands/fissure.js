@@ -23,12 +23,17 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     }
     
     async function postResult() {
-        message.channel.startTyping();
-        const worldStateData = await warframe.data.getWorldState();
-        const ws = new WorldState(JSON.stringify(worldStateData));
-        const makeFissureEmbed = await createEmbed(ws.fissures, ws.timestamp);
-        await message.channel.send({ embed: makeFissureEmbed });
-        message.channel.stopTyping();
+        try {
+            message.channel.startTyping();
+            const worldStateData = await warframe.data.getWorldState();
+            const ws = new WorldState(JSON.stringify(worldStateData));
+            const makeFissureEmbed = await createEmbed(ws.fissures, ws.timestamp);
+            await message.channel.send({ embed: makeFissureEmbed });
+            message.channel.stopTyping();
+        } catch(err) {
+            message.channel.send(err);
+            message.channel.stopTyping();
+        }
     }
     postResult();
 }
