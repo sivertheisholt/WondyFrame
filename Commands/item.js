@@ -14,7 +14,6 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
         let isVaulted = true;
         for(relic of relics) {
             if(dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`) !== undefined) {
-                console.log(relic);
                 relic.vaulted = "No";
                 isVaulted = false;
             } else {
