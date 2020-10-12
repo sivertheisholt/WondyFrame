@@ -1,5 +1,6 @@
 var methods = {
     messageChecker: async function (bot, message, discordUser, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
+        message.content = message.content.toLowerCase();
 
         //Check if user is bot or is command
         if (discordUser.bot) { return }

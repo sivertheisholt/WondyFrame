@@ -24,7 +24,7 @@ bot.on('ready', () => {
     bot.user.setActivity('wf.help')
     setInterval(function() {
         sortData();
-    }, 10000000)
+    }, 21600000)
 });
 
 bot.on('message', message => {
