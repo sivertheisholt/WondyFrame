@@ -64,10 +64,12 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
             const relicInfo = await warframe.data.getRelicInfo(helperMethods.data.makeCapitalFirstLettersFromString(relicType), helperMethods.data.makeCapitalFirstLettersFromString(relicName) + ".json", `${relicType} ${relicName}`);
             let readyTobeUsedData;
             if(relicRefinement !== undefined) {
-                readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic " + "("+helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement)+")"));
+                readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic " + "("+relicRefinement+")"));
             } else {
-                readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier + " " + relicInfo.name + " Relic"));
+                console.log(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic")
+                readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic"));
             }
+            
             const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated);
             await message.channel.send({ embed: makeEmbedForRelic });
             message.channel.stopTyping();
@@ -80,9 +82,6 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
     if(relicType !== undefined && relicName !== undefined) {
         postResult();
     } else {
-        message.channel.send("You didn't write the command correctly. Please check !help");
+        message.channel.send("You didn't write the command correctly. Please check WF.Help");
     }
 }
-
-
-
