@@ -229,6 +229,6 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
     if(itemName !== undefined) {
         postResult();
     } else {
-        message.channel.send("You didn't write the command correctly. Please check !help");
+        message.channel.send("You didn't write the command correctly. Please check WF.Help");
     }
 }
