@@ -1,4 +1,4 @@
-const warframe = require('../Handling/warframeHandler');
+const dojoItems = require('../Storage/customItems/shopitems.json')
 var methods = {
     sortData: async function (t, t2, t3, t4, t5, t6, t7, t8, t9) {
         return new Promise((resolve, reject) => {
@@ -29,6 +29,15 @@ var methods = {
                 } else {
                     for (const rotation of Object.keys(rewards)) {
                         addRewardsArray(planetName, nodeName, rotation, rewards[rotation], gameMode, blueprintDropChance)
+                    }
+                }
+            }
+            const addRewardsShop = (name, rewards) => {
+                if (Array.isArray(rewards)) {
+                    addRewardsArray("Dojo", name, null, rewards, "Purchasable", null);
+                } else {
+                    for (const rotation of Object.keys(rewards)) {
+                        addRewardsArray("Dojo", name, null, rewards, "Purchasable", null);
                     }
                 }
             }
@@ -63,6 +72,9 @@ var methods = {
             for(const miscItem of t8.miscItems) {
                 addRewardsEnemy(miscItem.enemyName, null, miscItem.items, "Enemy", miscItem.enemyItemDropChance);
             }
+            for(const item of dojoItems.Shop) {
+                addRewardsShop(item.name, item.items);
+            }
             /* for(const sortieReward of t9.sortieRewards) {
                 addRewards("Sortie", null, sortieReward, "Sortie");
             } */
@@ -71,7 +83,6 @@ var methods = {
         })
     },
     sortDataRelicDrops: async function (t) {
-        return new Promise((resolve, reject) => {
             const map = new Map()
             
             const addRewards = (tier, relicName, state, rewards, vaulted) => {
@@ -95,8 +106,7 @@ var methods = {
                     addRewards(tier, relicName, state, rewards, null)
                 }
             }
-            resolve(map);
-        })
+            return map;
     }
 };
 

@@ -100,7 +100,12 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
             if(counter == 12) {
                 break;
             }
-            nonPrimeEmbed.fields.push({name: (location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), value: "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${(location.blueprintDropChance/100*location.chance).toFixed(3)}%` : `Chance: ${location.chance.toFixed(3)}%`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, inline: true,});
+            if(location.gameMode == "Purchasable") {
+                nonPrimeEmbed.fields.push({name: `Shop - ${location.node}`, value: "Type: " + location.gameMode, inline: true,});
+            } else {
+                nonPrimeEmbed.fields.push({name: (location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), value: "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${(location.blueprintDropChance/100*location.chance).toFixed(3)}%` : `Chance: ${location.chance.toFixed(3)}%`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, inline: true,});
+            }
+            
             counter++;
         }
         return nonPrimeEmbed;

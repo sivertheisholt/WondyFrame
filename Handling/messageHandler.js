@@ -13,7 +13,6 @@ var methods = {
         let msg = message.content.toLowerCase().slice(prefix.length);
         if (msg.startsWith("item")) {
             command = msg.slice(0, 4);
-            //args = msg.slice(5);
             if(msg.search("-yes") !== -1 || msg.search("-no") !== -1) {
                 [args, args1] = msg.slice(5).split("-");
                 args = args.trim();
@@ -28,9 +27,8 @@ var methods = {
         try {
             let commandFile = require(`../Commands/${command}.js`);
             await commandFile.run(bot, message, args, args1, args2, warframeInfo, warframeRelicInfo, itemKeyWords);
-            console.log(message.author.username + " ran the command: " + command);
         } catch (err) {
-            message.channel.send("Invalid command! Please check !help")
+            message.channel.send("Invalid command! Please check wf.help")
         }
     }
 };
