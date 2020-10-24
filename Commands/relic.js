@@ -36,8 +36,10 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
                     if(counter == 9) {
                         break;
                     }
-                    relicEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(2) + " %", inline: true,})
-                    counter++;
+                    if(!location.isEvent) {
+                        relicEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(2) + " %", inline: true,})
+                        counter++;
+                    }
                 }
             } else {
                 relicEmbed.fields.push({name: '\u200B', value: `**This relic is either vaulted, Digital Extreme didn't update the drop table yet or this item don't have any drop locations**`, inline: false})
@@ -66,7 +68,6 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
             if(relicRefinement !== undefined) {
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic " + "("+relicRefinement+")"));
             } else {
-                console.log(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic")
                 readyTobeUsedData = await getTopNine(warframeDropLocations.get(relicInfo.tier.toLowerCase() + " " + relicInfo.name.toLowerCase() + " relic"));
             }
             
