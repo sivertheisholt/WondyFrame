@@ -62,15 +62,15 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
                 if(relic.state == "Intact" && relic.vaulted == "No") {
                     let getDropLocations = dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`);
                     let sortedAfterChance = await getTopThree(getDropLocations);
-                    let counterMaxThree = 0;
+                    let counterMaxSix = 0;
                     primeEmbed.fields.push({name: '\u200B', value: `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, inline: false,});
                     for(location of sortedAfterChance) {
-                        if(counterMaxThree == 6) {
+                        if(counterMaxSix == 6) {
                             break;
                         }
                         if(!location.isEvent) {
                             primeEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`, inline: true,});
-                            counterMaxThree++;
+                            counterMaxSix++;
                         }
                     }
                 }
