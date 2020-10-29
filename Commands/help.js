@@ -61,6 +61,11 @@ exports.run = (bot, message, args, func) => {
                 name: "***WF.Deimos ***",
                 value: `Show fass/vome on Cambion Drift`,
                 inline: false,
+            },
+            {
+                name: "***WF.Privacy ***",
+                value: `Show Privacy Policy`,
+                inline: false,
             }],
         };
         return helpEmbed;
