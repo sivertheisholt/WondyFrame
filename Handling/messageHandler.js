@@ -28,7 +28,7 @@ var methods = {
             let commandFile = require(`../Commands/${command}.js`);
             await commandFile.run(bot, message, args, args1, args2, warframeInfo, warframeRelicInfo, itemKeyWords);
         } catch (err) {
-            message.channel.send("Invalid command! Please check wf.help")
+            //message.channel.send("Invalid command! Please check wf.help")
         }
     }
 };
