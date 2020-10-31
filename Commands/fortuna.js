@@ -33,10 +33,10 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
             const worldStateData = await warframe.data.getWorldState();
             const ws = new WorldState(JSON.stringify(worldStateData));
             const makeFortunaEmbed = await createEmbed(ws.vallisCycle, ws.timestamp);
-            await message.channel.send({ embed: makeFortunaEmbed });
+            await message.channel.send({ embed: makeFortunaEmbed }).catch(err => message.channel.stopTyping());
             message.channel.stopTyping();
         } catch(err) {
-            message.channel.send(err);
+            message.channel.send(err).catch(err => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }
