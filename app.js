@@ -6,13 +6,13 @@ const messageHandler = require('./Handling/messageHandler.js');
 const botOnReady = require('./Handling/botOnReady.js');
 const warframe = require('./Handling/warframeHandler.js');
 
-const bot = new Discord.Client();
+const bot = new Discord.Client({
+    autoReconnect: true,
+    unknownCommandResponse: false
+});
 
 let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 sortData();
-
-//Reconnect
-const cli = new Discord.Client({ autoReconnect: true });
 
 //Token
 const token = process.env.DISCORD_TOKEN;
