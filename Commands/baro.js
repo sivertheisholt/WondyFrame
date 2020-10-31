@@ -53,14 +53,14 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
             const ws = new WorldState(JSON.stringify(worldStateData));
             const makeBaroEmbed = await createEmbed(ws.voidTrader, ws.timestamp);
             if(ws.voidTrader.active) {
-                await message.channel.send({ embed: makeBaroEmbed[0] });
-                await message.channel.send({ embed: makeBaroEmbed[1] });
+                await message.channel.send({ embed: makeBaroEmbed[0] }).catch(err => message.channel.stopTyping());
+                await message.channel.send({ embed: makeBaroEmbed[1] }).catch(err => message.channel.stopTyping());
             } else {
-                await message.channel.send({ embed: makeBaroEmbed[0] });
+                await message.channel.send({ embed: makeBaroEmbed[0] }).catch(err => message.channel.stopTyping());
             }
             message.channel.stopTyping();
         } catch(err) {
-            message.channel.send(err);
+            message.channel.send(err).catch(err => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }

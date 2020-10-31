@@ -11,6 +11,7 @@ const bot = new Discord.Client({
     unknownCommandResponse: false
 });
 
+
 let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 sortData();
 

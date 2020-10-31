@@ -34,10 +34,10 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
         try {
             message.channel.startTyping();
             const policyEmbed = await createEmbed();
-            await message.channel.send({ embed: policyEmbed });
+            await message.channel.send({ embed: policyEmbed }).catch(err => message.channel.stopTyping());
             message.channel.stopTyping();
         } catch(err) {
-            message.channel.send(err);
+            message.channel.send(err).catch(err => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }
