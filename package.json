@@ -17,8 +17,7 @@
     "node-fetch": "^2.6.0",
     "node-gyp": "^3.8.0",
     "strict-uri-encode": "^2.0.0",
-    "warframe-worldstate-data": "git://github.com/wfcd/warframe-worldstate-data.git",
-    "warframe-worldstate-parser": "^2.16.1"
+    "warframe-worldstate-parser": "^2.16.3"
   },
   "devDependencies": {
     "nodemon": "^1.19.4"
