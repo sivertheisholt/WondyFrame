@@ -44,10 +44,10 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
             const worldStateData = await warframe.data.getWorldState();
             const ws = new WorldState(JSON.stringify(worldStateData));
             const makeSortieEmbed = await createEmbed(ws.sortie, ws.timestamp);
-            await message.channel.send({ embed: makeSortieEmbed }).catch(err => message.channel.stopTyping());
+            await message.channel.send({ embed: makeSortieEmbed }).catch(() => message.channel.stopTyping());
             message.channel.stopTyping();
         } catch(err) {
-            message.channel.send(err).catch(err => message.channel.stopTyping());;
+            message.channel.send(err).catch(() => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }

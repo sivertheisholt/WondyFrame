@@ -210,7 +210,7 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
                     throw `Sorry I can't find any drop locations for: ${itemName}`;
                 }
                 const makeEmbedForPrimeResult = await makeEmbedForPrime(tryToFindKey, warframeRelicInfo.get(tryToFindKey), warframeDropLocations, dropTableLastUpdated);
-                await message.channel.send({ embed: makeEmbedForPrimeResult }).catch(err => message.channel.stopTyping());
+                await message.channel.send({ embed: makeEmbedForPrimeResult }).catch(() => message.channel.stopTyping());
                 message.channel.stopTyping();
             } else {
                 //For non prime items here
@@ -222,17 +222,17 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
                 const getDropLocationsForItem = await warframeDropLocations.get(tryToFindKey);
                 const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
                 const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(tryToFindKey, readyTobeUsedData, dropTableLastUpdated)
-                await message.channel.send({ embed: makeEmbedForNonPrimeResult }).catch(err => message.channel.stopTyping());
+                await message.channel.send({ embed: makeEmbedForNonPrimeResult }).catch(() => message.channel.stopTyping());
                 message.channel.stopTyping();
             }
         } catch(err) {
-            message.channel.send(err).catch(err => message.channel.stopTyping());
+            message.channel.send(err).catch(() => message.channel.stopTyping());
             message.channel.stopTyping();
         }
     }
     if(itemName !== undefined) {
         postResult();
     } else {
-        message.channel.send("You didn't write the command correctly. Please check WF.Help").catch(err => message.channel.stopTyping());;
+        message.channel.send("You didn't write the command correctly. Please check WF.Help").catch(() => message.channel.stopTyping());;
     }
 }

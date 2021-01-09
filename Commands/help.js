@@ -75,10 +75,10 @@ exports.run = (bot, message, args, func) => {
         try {
             message.channel.startTyping();
             const makeHelpEmbed = await createHelpEmbed();
-            await message.author.send({ embed: makeHelpEmbed }).catch(err => message.channel.stopTyping());
+            await message.author.send({ embed: makeHelpEmbed }).catch(() => message.channel.stopTyping());
             message.channel.stopTyping();
         } catch(err) {
-            message.channel.send(err).catch(err => message.channel.stopTyping());;
+            message.channel.send(err).catch(() => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }
