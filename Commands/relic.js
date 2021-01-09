@@ -72,10 +72,10 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
             }
             
             const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated);
-            await message.channel.send({ embed: makeEmbedForRelic }).catch(err => message.channel.stopTyping());
+            await message.channel.send({ embed: makeEmbedForRelic }).catch(() => message.channel.stopTyping());
             message.channel.stopTyping();
         } catch (err) {
-            message.channel.send(err).catch(err => message.channel.stopTyping());;
+            message.channel.send(err).catch(() => message.channel.stopTyping());;
             message.channel.stopTyping();
         }
     }
@@ -83,6 +83,6 @@ exports.run = (bot, message, relicType, relicName, relicRefinement, warframeDrop
     if(relicType !== undefined && relicName !== undefined) {
         postResult();
     } else {
-        message.channel.send("You didn't write the command correctly. Please check WF.Help").catch(err => message.channel.stopTyping());
+        message.channel.send("You didn't write the command correctly. Please check WF.Help").catch(() => message.channel.stopTyping());
     }
 }

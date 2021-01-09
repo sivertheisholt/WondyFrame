@@ -22,6 +22,7 @@ const prefix = 'wf.';
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
+    console.log("Wondyframe is serving: " + bot.guilds.cache.map((guild) => guild.memberCount).reduce((p, c) => p + c) + " users");
     bot.user.setActivity('wf.help')
     setInterval(function() {
         sortData();
