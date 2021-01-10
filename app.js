@@ -22,7 +22,6 @@ const prefix = 'wf.';
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    console.log("Wondyframe is serving: " + bot.guilds.cache.map((guild) => guild.memberCount).reduce((p, c) => p + c) + " users");
     bot.user.setActivity('wf.help')
     setInterval(function() {
         sortData();
@@ -51,9 +50,10 @@ async function sortData() {
         let getMiscItemDrops = await warframe.data.getMiscDrops();
         let getSortieRewards = await warframe.data.getSortieRewards();
         warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops, getTransientRewards, getEnemyModDrops, getMiscItemDrops, getSortieRewards);
+        warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
         itemKeyWords = warframeDropInfo.keys();
         console.log("Done getting mission rewards and relic rewards!")
-        warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
+        
     } catch(err) {
         console.log(err);
     }   
