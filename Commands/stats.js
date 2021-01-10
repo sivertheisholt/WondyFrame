@@ -1,6 +1,6 @@
 exports.run = (bot, message) => {
     async function createEmbed() {
-        const memberCount = bot.guilds.cache.map((guild) => guild.memberCount).reduce((p, c) => p + c);
+        const memberCount = bot.guilds.cache.map((guild) => guild.members.cache.filter(member => !member.user.bot).size).reduce((p, c) => p + c);
         const serverCount  = bot.guilds.cache.size;
         const statsEmbed = {
             color: 0x0099ff,
@@ -19,7 +19,7 @@ exports.run = (bot, message) => {
             const statsEmbed = await createEmbed();
             message.channel.send({ embed: statsEmbed }).catch(() => message.channel.stopTyping());
             bot.guilds.cache.forEach(guild => {
-                console.log(`${guild.name} | ${guild.id}`);
+                console.log(`${guild.name} | ${guild.id} | ${guild.members.cache.filter(member => !member.user.bot).size}`);
             })
             message.channel.stopTyping();
         } catch(err) {
