@@ -18,6 +18,9 @@ exports.run = (bot, message) => {
             message.channel.startTyping();
             const statsEmbed = await createEmbed();
             message.channel.send({ embed: statsEmbed }).catch(() => message.channel.stopTyping());
+            bot.guilds.cache.forEach(guild => {
+                console.log(`${guild.name} | ${guild.id}`);
+            })
             message.channel.stopTyping();
         } catch(err) {
             message.channel.send(err).catch(() => message.channel.stopTyping());
