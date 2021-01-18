@@ -1,7 +1,9 @@
 # General infomation
-I made WondyFrame for personal use and a learning experience, but I thought I should share it for others to use as well. I got tired of having to search up a prime item on the wiki, write the relics down and find the drop location for each. This was the main goal for this bot, just type in the prime item you wanna farm and you get the relics with the best drop locations. In the end, I made the bot do a lot more than just that. This bot doesn't have any fancy functions or commands. It does one thing and that is giving you the information you need quickly in an easy to read format. I really hope you find this discord bot useful. PC info only!
+This is WondyFrame. Im making this bot for personal use and a learning experience.
 
 Invite link: https://discord.com/oauth2/authorize?client_id=762486668929531924&permissions=0&scope=bot
+
+Under you can see a few commands. 
 
 -----
 
