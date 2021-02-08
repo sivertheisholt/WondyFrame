@@ -5,12 +5,14 @@ const fs = require('fs');
 const messageHandler = require('./Handling/messageHandler.js');
 const botOnReady = require('./Handling/botOnReady.js');
 const warframe = require('./Handling/warframeHandler.js');
+const AutoPoster = require('topgg-autoposter')
 
 const bot = new Discord.Client({
     autoReconnect: true,
     unknownCommandResponse: false
 });
 
+const ap = AutoPoster(process.env.TOPGG_TOKEN, bot)
 
 let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 sortData();
@@ -36,6 +38,10 @@ bot.on('message', message => {
     }
 });
 
+ap.on('posted', () => {
+    console.log('Posted stats to Top.gg!')
+  })
+
 async function sortData() {
     try {
         console.log("Getting mission rewards and relic rewards...");
@@ -53,7 +59,6 @@ async function sortData() {
         warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
         itemKeyWords = warframeDropInfo.keys();
         console.log("Done getting mission rewards and relic rewards!")
-        
     } catch(err) {
         console.log(err);
     }   
