@@ -5,6 +5,8 @@ Invite link: https://discord.com/oauth2/authorize?client_id=762486668929531924&p
 
 Under you can see a few commands. 
 
+(This code is ugly and outdated - Need rework)
+
 -----
 
 ## Commands  
