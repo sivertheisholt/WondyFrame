@@ -27,9 +27,13 @@ bot.on('ready', async () => {
     bot.user.setActivity('wf.help')
 
     for(const command of commandList) {
-        //bot.api.applications(bot.user.id).guilds('277449687777148928').commands.delete(command)
-        //bot.api.applications(bot.user.id).commands.post(command).catch(err => {});
-        bot.api.applications(bot.user.id).guilds('476048969034629121').commands.post(command).catch(err => {});
+        bot.api.applications(bot.user.id).commands.post(command).catch(err => {});
+        //bot.api.applications(bot.user.id).guilds('476048969034629121').commands.post(command).catch(err => {});
+    }
+    //Delete commands from specific guild
+    const things = await bot.api.applications(bot.user.id).guilds('277449687777148928').commands.get()
+    for(const thing of things) {
+        bot.api.applications(bot.user.id).guilds('277449687777148928').commands(thing.id).delete();
     }
     
     bot.ws.on('INTERACTION_CREATE', async interaction => {
