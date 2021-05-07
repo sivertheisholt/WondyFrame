@@ -1,5 +1,4 @@
-exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations, warframeRelicInfo) => {
-    const Discord = require('discord.js');
+exports.run = async (itemName, showVaulted, args2, warframeDropLocations, warframeRelicInfo) => {
     const warframe = require('../Handling/warframeHandler');
     const helperMethods = require('../Handling/helperMethods');
     const fetch = require('node-fetch');
@@ -200,39 +199,31 @@ exports.run = (bot, message, itemName, showVaulted, args2, warframeDropLocations
     
     async function postResult() {
         try {
-            message.channel.startTyping();
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
             if(itemName.search("prime") !== -1) {
                 //For prime items here
                 const tryToFindKey = await helperMethods.data.searchForItemInMap(itemName, warframeRelicInfo);
                 if(tryToFindKey == undefined) {
-                    message.channel.stopTyping();
                     throw `Sorry I can't find any drop locations for: ${itemName}`;
                 }
                 const makeEmbedForPrimeResult = await makeEmbedForPrime(tryToFindKey, warframeRelicInfo.get(tryToFindKey), warframeDropLocations, dropTableLastUpdated);
-                await message.channel.send({ embed: makeEmbedForPrimeResult }).catch(() => message.channel.stopTyping());
-                message.channel.stopTyping();
+                return makeEmbedForPrimeResult;
             } else {
                 //For non prime items here
                 const tryToFindKey = await helperMethods.data.searchForItemInMap(itemName, warframeDropLocations);
                 if(tryToFindKey == undefined) {
-                    message.channel.stopTyping();
                     throw `Sorry I can't find any drop locations for: ${itemName}`;
                 }
                 const getDropLocationsForItem = await warframeDropLocations.get(tryToFindKey);
                 const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
                 const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(tryToFindKey, readyTobeUsedData, dropTableLastUpdated)
-                await message.channel.send({ embed: makeEmbedForNonPrimeResult }).catch(() => message.channel.stopTyping());
-                message.channel.stopTyping();
+                return makeEmbedForNonPrimeResult;
             }
         } catch(err) {
-            message.channel.send(err).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
+            return err;
         }
     }
-    if(itemName !== undefined) {
-        postResult();
-    } else {
-        message.channel.send("You didn't write the command correctly. Please check WF.Help").catch(() => message.channel.stopTyping());;
-    }
+    if(itemName !== undefined)
+        return await postResult();
+    return "You didn't write the command correctly. Please check WF.Help";
 }
