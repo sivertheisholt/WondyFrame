@@ -1,7 +1,7 @@
 # General infomation
 This is WondyFrame. Im making this bot for personal use and a learning experience.
 
-Invite link: https://discord.com/oauth2/authorize?client_id=762486668929531924&permissions=0&scope=bot
+Invite link: https://discord.com/api/oauth2/authorize?client_id=762486668929531924&permissions=0&scope=bot%20applications.commands
 
 Under you can see a few commands. 
 
