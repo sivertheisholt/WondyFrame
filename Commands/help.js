@@ -1,5 +1,4 @@
-exports.run = (bot, message, args, func) => {
-
+exports.run = async (args, func) => {
     function createHelpEmbed() {
         const helpEmbed = {
             color: 0x0099ff,
@@ -73,14 +72,11 @@ exports.run = (bot, message, args, func) => {
    
     async function postResult() {
         try {
-            message.channel.startTyping();
             const makeHelpEmbed = await createHelpEmbed();
-            await message.author.send({ embed: makeHelpEmbed }).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
+            return makeHelpEmbed;
         } catch(err) {
-            message.channel.send(err).catch(() => message.channel.stopTyping());;
-            message.channel.stopTyping();
+            return err;
         }
     }
-    postResult();
+    return await postResult();
 }

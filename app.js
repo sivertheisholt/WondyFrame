@@ -1,11 +1,11 @@
 "use strict";
 require('dotenv').config();
 const Discord = require('discord.js');
-const fs = require('fs');
 const messageHandler = require('./Handling/messageHandler.js');
 const botOnReady = require('./Handling/botOnReady.js');
 const warframe = require('./Handling/warframeHandler.js');
 const AutoPoster = require('topgg-autoposter')
+const commandList = require('./Storage/commands.json');
 
 const bot = new Discord.Client({
     autoReconnect: true,
@@ -22,9 +22,30 @@ const token = process.env.DISCORD_TOKEN;
 
 const prefix = 'wf.';
 
-bot.on('ready', () => {
+bot.on('ready', async () => {
     console.log(`Logged in as ${bot.user.tag}!`)
     bot.user.setActivity('wf.help')
+
+    for(const command of commandList) {
+        bot.api.applications(bot.user.id).guilds('277449687777148928').commands.post(command).catch(err => {});
+    }
+
+    bot.ws.on('INTERACTION_CREATE', async interaction => {
+        let messageString = `${prefix}${interaction.data.name} `;
+        if(interaction.data.options != undefined && interaction.data.options.length >= 1) {
+            for(const messagePart of interaction.data.options) {
+                messageString += `${messagePart.value.toLowerCase() == "yes" || messagePart.value.toLowerCase() == "no" ? "-" + messagePart.value : messagePart.value} `
+            }
+        }
+        const result = await messageHandler.slashMessage(bot, interaction.channel_id, messageString, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords)
+        bot.api.interactions(interaction.id, interaction.token).callback.post({
+            data: {
+                type: 4,
+                data: result
+            }
+        })
+    });
+    
     setInterval(function() {
         sortData();
     }, 21600000)
@@ -34,13 +55,13 @@ bot.on('message', message => {
     if(warframeDropInfo == undefined && warframeRelicInfo == undefined) {
         return;
     } else {
-        messageHandler.data.messageChecker(bot, message, message.author, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords);
+        messageHandler.chatMessage(message, message.author, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords);
     }
 });
 
 ap.on('posted', () => {
     console.log('Posted stats to Top.gg!')
-  })
+})
 
 async function sortData() {
     try {

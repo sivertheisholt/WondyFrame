@@ -1,26 +1,88 @@
-{
-  "Help": {
-    "name": "Help",
-    "group": "User",
-    "desc": "Showing a list of all commands. <Required> / [Optional] - Accepted values for optional will be in ()",
-    "usage": "help [group OR command]"
-  },
-  "Relic": {
+[{
+  "data": {
     "name": "Relic",
-    "group": "User",
-    "desc": "Search for relic information",
-    "usage": "Relic <Relic Name> [Refinement (Radiant / Flawless / Exceptional / Intact)]"
-  },
-  "Item": {
-    "name": "Item",
-    "group": "User",
-    "desc": "Search for item. Make sure the item name is exact!",
-    "usage": "Item <Item Name> [Vaulted (Yes / No)]"
-  },
-  "Baro": {
-    "name": "Baro",
-    "group": "User",
-    "desc": "Show current information about Baro Ki'Teer",
-    "usage": "Baro"
+    "description": "Search for relic information",
+    "options": [
+      {
+        "type": 3,
+        "name": "Relic",
+        "description": "Relic name",
+        "default": false,
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "Refinement",
+        "description": "Refinement level: Radiant/Flawless/Exceptional/Intact",
+        "default": false,
+        "required": false
+      }
+    ]
   }
-}
+},{
+  "data": {
+    "name": "Item",
+    "description": "WIP! Search for item",
+    "options": [
+      {
+        "type": 3,
+        "name": "Item",
+        "description": "Name of item",
+        "default": false,
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "Vaulted",
+        "description": "If you wanna see vaulted: Yes / No",
+        "default": false,
+        "required": false
+      }
+    ]
+  }
+},{
+  "data": {
+    "name": "Sortie",
+    "description": "Show current active sortie"
+  }
+},{
+  "data": {
+    "name": "Invasion",
+    "description": "Show current active invasions"
+  }
+},{
+  "data": {
+    "name": "Baro",
+    "description": "Show current information about Baro Ki'Teer"
+  }
+},{
+  "data": {
+    "name": "Nightwave",
+    "description": "Show current active nightwave challenges"
+  }
+},{
+  "data": {
+    "name": "Fissure",
+    "description": "Show current active fissure missions"
+  }
+},{
+  "data": {
+    "name": "Earth",
+    "description": "Show day/night on Earth"
+  }
+},{
+  "data": {
+    "name": "Cetus",
+    "description": "Show day/night on Cetus"
+  }
+},{
+  "data": {
+    "name": "Fortuna",
+    "description": "Show cold/warm on Orb Vallis"
+  }
+},{
+  "data": {
+    "name": "Deimos",
+    "description": "Show fass/vome on Cambion Drift"
+  }
+}]

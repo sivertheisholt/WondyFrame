@@ -1,4 +1,4 @@
-exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKeyWords) => {
+exports.run = async (args1, args2, args3, warframeDropLocations, itemKeyWords) => {
 
     function createEmbed() {
         const policyEmbed = {
@@ -32,14 +32,11 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     
     async function postResult() {
         try {
-            message.channel.startTyping();
             const policyEmbed = await createEmbed();
-            await message.channel.send({ embed: policyEmbed }).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
+            return policyEmbed;
         } catch(err) {
-            message.channel.send(err).catch(() => message.channel.stopTyping());;
-            message.channel.stopTyping();
+            return err;
         }
     }
-    postResult();
+    return await postResult();
 }

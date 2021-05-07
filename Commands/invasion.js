@@ -1,4 +1,4 @@
-exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKeyWords) => {
+exports.run = async (args1, args2, args3, warframeDropLocations, itemKeyWords) => {
     const warframe = require('../Handling/warframeHandler');
     const WorldState = require('warframe-worldstate-parser');
 
@@ -29,17 +29,14 @@ exports.run = (bot, message, args1, args2, args3, warframeDropLocations, itemKey
     
     async function postResult() {
         try {
-            message.channel.startTyping();
             const dropTableLastUpdated = await warframe.data.getBuildInfo();
             const worldStateData = await warframe.data.getWorldState();
             const ws = new WorldState(JSON.stringify(worldStateData));
             const makeInvasionsEmbed = await createEmbed(ws.invasions, dropTableLastUpdated);
-            await message.channel.send({ embed: makeInvasionsEmbed }).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
+            return makeInvasionsEmbed;
         } catch(err) {
-            message.channel.send(err).catch(() => message.channel.stopTyping());;
-            message.channel.stopTyping();
+            return err;
         }
     }
-    postResult();
+    return await postResult();
 }
