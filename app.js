@@ -27,7 +27,7 @@ bot.on('ready', async () => {
     bot.user.setActivity('wf.help')
 
     for(const command of commandList) {
-        bot.api.applications(bot.user.id).guilds('277449687777148928').commands.post(command).catch(err => {});
+        bot.api.applications(bot.user.id).commands.post(command).catch(err => {});
     }
 
     bot.ws.on('INTERACTION_CREATE', async interaction => {
