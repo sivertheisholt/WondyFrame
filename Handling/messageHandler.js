@@ -27,7 +27,9 @@ exports.slashMessage = async function(bot, channelId, messageString, prefix, war
                 const apiMessage = await Discord.APIMessage.create(bot.channels.resolve(channelId), new Discord.MessageEmbed(result[0]))
                 .resolveData()
                 .resolveFiles()
-            apiMessage.data.embeds.push(new Discord.MessageEmbed(result[1]));
+            if(result[0].fields.length > 10) {
+                apiMessage.data.embeds.push(new Discord.MessageEmbed(result[1]));
+            }
             return {...apiMessage.data, files: apiMessage.files};
             }
             const apiMessage = await Discord.APIMessage.create(bot.channels.resolve(channelId), new Discord.MessageEmbed(result))
