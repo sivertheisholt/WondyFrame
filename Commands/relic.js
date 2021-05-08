@@ -5,7 +5,7 @@ exports.run = async (relicType, relicName, relicRefinement, warframeDropLocation
     
     async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated) {
         relicType = await helperMethods.data.makeCapitalFirstLettersFromString(relicType);
-        if(relicRefinement == undefine || relicRefinement == " ") {
+        if(relicRefinement == undefine || relicRefinement == "") {
             relicRefinement = "Intact";
         }
         relicRefinement = await helperMethods.data.makeCapitalFirstLettersFromString(relicRefinement);
