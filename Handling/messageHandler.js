@@ -51,10 +51,8 @@ function messageFormatter(message, prefix) {
         if(msg.search("-yes") !== -1 || msg.search("-no") !== -1) {
             [args, args1] = msg.slice(5).split("-");
             args = args.trim();
-            args1 = args1.replace(/\s/g, '')
         } else {
             args = msg.slice(5);
-            args = args.substring(0, args.length - 1);
         }
     } else {
         [command, args, args1, args2, args3] = msg.split(" ");
