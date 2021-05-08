@@ -1,18 +1,18 @@
 [{
   "data": {
-    "name": "Relic",
+    "name": "relic",
     "description": "Search for relic information",
     "options": [
       {
         "type": 3,
-        "name": "Relic",
+        "name": "relic",
         "description": "Relic name",
         "default": false,
         "required": true
       },
       {
         "type": 3,
-        "name": "Refinement",
+        "name": "refinement",
         "description": "Refinement level: Radiant/Flawless/Exceptional/Intact",
         "default": false,
         "required": false
@@ -21,19 +21,19 @@
   }
 },{
   "data": {
-    "name": "Item",
+    "name": "item",
     "description": "WIP! Search for item",
     "options": [
       {
         "type": 3,
-        "name": "Item",
+        "name": "item",
         "description": "Name of item",
         "default": false,
         "required": true
       },
       {
         "type": 3,
-        "name": "Vaulted",
+        "name": "vaulted",
         "description": "If you wanna see vaulted: Yes / No",
         "default": false,
         "required": false
@@ -42,47 +42,47 @@
   }
 },{
   "data": {
-    "name": "Sortie",
+    "name": "sortie",
     "description": "Show current active sortie"
   }
 },{
   "data": {
-    "name": "Invasion",
+    "name": "invasion",
     "description": "Show current active invasions"
   }
 },{
   "data": {
-    "name": "Baro",
+    "name": "baro",
     "description": "Show current information about Baro Ki'Teer"
   }
 },{
   "data": {
-    "name": "Nightwave",
+    "name": "nightwave",
     "description": "Show current active nightwave challenges"
   }
 },{
   "data": {
-    "name": "Fissure",
+    "name": "fissure",
     "description": "Show current active fissure missions"
   }
 },{
   "data": {
-    "name": "Earth",
+    "name": "earth",
     "description": "Show day/night on Earth"
   }
 },{
   "data": {
-    "name": "Cetus",
+    "name": "cetus",
     "description": "Show day/night on Cetus"
   }
 },{
   "data": {
-    "name": "Fortuna",
+    "name": "fortuna",
     "description": "Show cold/warm on Orb Vallis"
   }
 },{
   "data": {
-    "name": "Deimos",
+    "name": "deimos",
     "description": "Show fass/vome on Cambion Drift"
   }
 }]
