@@ -87,7 +87,7 @@ async function sortData() {
         warframeDropInfo = await botOnReady.data.sortData(getWarframeData, getWarframeCetusBountyRewards, getWarframeFortunaBountyRewards, getWarframeDeimosBountyRewards, getEnemyBlueprintDrops, getTransientRewards, getEnemyModDrops, getMiscItemDrops, getSortieRewards);
         warframeRelicInfo = await botOnReady.data.sortDataRelicDrops(getWarframeRelicData);
         itemKeyWords = warframeDropInfo.keys();
-        console.log("Done getting mission rewards and relic rewards!")
+        console.log("Done getting mission rewards and relic rewards!");
     } catch(err) {
         console.log(err);
     }   
