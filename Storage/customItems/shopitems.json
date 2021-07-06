@@ -2083,5 +2083,14 @@
         },{
             "itemName": "The Perring Sequence Stencil"
         }]
+    }, {
+        "name": "Bash Lab",
+        "items": [{
+            "itemName": "Yareli Neuroptics"
+        },{
+            "itemName": "Yareli Chassis"
+        },{
+            "itemName": "Yareli Systems"
+        }]
     }]
 }
