@@ -26,8 +26,11 @@ exports.run = async (relicType, relicName, relicRefinement, warframeDropLocation
                 },
             };
             if(dropLocations !== "Vaulted") {
-                    relicEmbed.fields.push({name: `\u200B`, value: `**Top 9 drop locations**`, inline: false,})
-                    let counter = 0;
+                for (const reward of relicInfo.rewards[relicRefinement]) {
+                    relicEmbed.fields.push({name: reward.itemName, value: "Rarity: " + reward.rarity + '\n' + "Chance: " + (reward.chance).toFixed(2) + " %", inline: true,})
+                }
+                relicEmbed.fields.push({name: `\u200B`, value: `**Top 9 drop locations**`, inline: false,})
+                let counter = 0;
                 for (const location of dropLocations) {
                     if(counter == 9) {
                         break;
@@ -39,9 +42,9 @@ exports.run = async (relicType, relicName, relicRefinement, warframeDropLocation
                 }
             } else {
                 relicEmbed.fields.push({name: '\u200B', value: `**This relic is either vaulted, Digital Extreme didn't update the drop table yet or this item don't have any drop locations**`, inline: false})
-            }
-            for (const reward of relicInfo.rewards[relicRefinement]) {
-                relicEmbed.fields.push({name: reward.itemName, value: "Rarity: " + reward.rarity + '\n' + "Chance: " + (reward.chance).toFixed(2) + " %", inline: true,})
+                for (const reward of relicInfo.rewards[relicRefinement]) {
+                    relicEmbed.fields.push({name: reward.itemName, value: "Rarity: " + reward.rarity + '\n' + "Chance: " + (reward.chance).toFixed(2) + " %", inline: true,})
+                }
             }
             return relicEmbed;
         }
