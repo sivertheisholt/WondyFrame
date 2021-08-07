@@ -1,3 +1,5 @@
+[![Discord Bots](https://top.gg/api/widget/762486668929531924.svg)](https://top.gg/bot/762486668929531924)
+
 # General infomation
 This is WondyFrame. Im making this bot for personal use and a learning experience.
 
@@ -6,6 +8,8 @@ Invite link: https://discord.com/api/oauth2/authorize?client_id=7624866689295319
 Under you can see a few commands. 
 
 (This code is ugly and outdated - Need rework)
+
+
 
 -----
 
