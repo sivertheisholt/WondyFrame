@@ -1,21 +1,4 @@
 const Discord = require('discord.js');
-exports.chatMessage = async function(messageObject, discordUser, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
-    //Check if user is bot or is command
-    if (discordUser.bot) return;
-    if (!messageObject.content.startsWith(prefix)) return;
-
-    //Formats message
-    const formatMessage = await messageFormatter(messageObject.content, prefix);
-
-    //Try to start command
-    try {
-        let commandFile = require(`../Commands/${formatMessage[0]}.js`);
-        messageObject.channel.startTyping();
-        sendResultNormal(formatMessage[0], messageObject, await commandFile.run(formatMessage[1], formatMessage[2], formatMessage[3], warframeInfo, warframeRelicInfo, itemKeyWords));
-    } catch (err) {
-        messageObject.channel.stopTyping();
-    }
-}
 
 exports.slashMessage = async function(bot, channelId, messageString, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
     const formatMessage = await messageFormatter(messageString, prefix);
@@ -60,34 +43,4 @@ function messageFormatter(message, prefix) {
         [command, args, args1, args2, args3] = msg.split(" ");
     }
     return [command, args, args1, args2, args3];
-}
-
-async function sendResultNormal(command, message, result) {
-    try {
-        if(typeof result === 'string') {
-            throw result;
-        }
-        if(command === "help") {
-            message.author.send({ embed: result }).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
-            return;
-        }
-        if(Array.isArray(result)) {
-            if(result.length > 1) {
-                for(const embedInfo of result) {
-                    message.channel.send({embed: embedInfo}).catch(() => message.channel.stopTyping());
-                }
-                message.channel.stopTyping();
-                return;
-            }
-            message.channel.send({embed: result[0]}).catch(() => message.channel.stopTyping());
-            message.channel.stopTyping();
-            return;
-        }
-        message.channel.send({embed: result}).catch(() => message.channel.stopTyping());
-        message.channel.stopTyping();
-    } catch(err) {
-        message.channel.send(err).catch(() => message.channel.stopTyping());
-        message.channel.stopTyping();
-    }
 }
