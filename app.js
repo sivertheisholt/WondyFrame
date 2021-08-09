@@ -4,10 +4,12 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const logger = require('./logging/logger');
 const initializer = require('./utils/initializeBot');
+const refreshData = require('./utils/warframeUtil');
 
 //Start the bot
 async function startBot() {
     try {
+        
         //Token
         const token = process.env.DISCORD_TOKEN;
 
@@ -19,19 +21,26 @@ async function startBot() {
             autoReconnect: true,
             unknownCommandResponse: false
         });
-
+    
         //Initialize systems
         const initializationResult = await initializer.initialize(bot, prefix);
         if(!initializationResult) throw new Error("Could not initialize systems");
 
         //Log bot in
         bot.login(token);
+
+        //Set interval for refresh of warframe info
+        setInterval(async function() {
+            const values = await refreshData.refreshData(warframeDropInfo, warframeRelicInfo, itemKeyWords);
+            if(!values) throw new Error("Could not retrieve warframe information");
+        }, 21600000)
     } catch(err) {
         logger.error(err);
         restartBot();
     }
 }
 
+//Restarts bot
 function restartBot() {
     logger.info("Trying to restart bot because of crash...")
     startBot();

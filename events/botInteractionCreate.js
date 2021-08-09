@@ -1,10 +1,11 @@
 "use strict";
 
-const messageHandler = require('../Handling/messageHandler.js');
 const logger = require('../logging/logger');
+const interactionSystem = require('../systems/interactionSystem');
+const warframeUtils = require('../utils/warframeUtil');
 
 exports.bot_interaction = async function(bot, prefix) {
-    bot.ws.on('INTERACTION_CREATE', async interaction => {
+    bot.ws.on('INTERACTION_CREATE', interaction => {
         logger.debug('Interaction received');
         let messageString = `${prefix}${interaction.data.name} `;
         if(interaction.data.options != undefined && interaction.data.options.length >= 1) {
@@ -14,13 +15,6 @@ exports.bot_interaction = async function(bot, prefix) {
             }
         }
         logger.debug('Messagestring successfully created');
-
-        const result = await messageHandler.slashMessage(bot, interaction.channel_id, messageString, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords)
-        bot.api.interactions(interaction.id, interaction.token).callback.post({
-            data: {
-                type: 4,
-                data: result
-            }
-        })
+        interactionSystem.interaction_route(bot, interaction, messageString, prefix, warframeUtils.get_warframe_drop(), warframeUtils.get_warframe_relic(), warframeUtils.get_warframe_itemKey());
     });
 }

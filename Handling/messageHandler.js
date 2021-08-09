@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 
 exports.slashMessage = async function(bot, channelId, messageString, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
     const formatMessage = await messageFormatter(messageString, prefix);
+    console.log(formatMessage);
     try {
         let commandFile = require(`../Commands/${formatMessage[0]}.js`);
         const result = await commandFile.run(formatMessage[1], formatMessage[2], formatMessage[3], warframeInfo, warframeRelicInfo, itemKeyWords);

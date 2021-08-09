@@ -3,8 +3,9 @@
 const logger = require('../logging/logger');
 const warframe = require('../Handling/warframeHandler.js');
 const sortWarframeData = require('../Handling/sortWarframeData.js');
+let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 
-exports.refreshData = async function(warframeDropInfo, warframeRelicInfo, itemKeyWords) {
+exports.refreshData = async function() {
     try {
         logger.info("Getting mission rewards and relic rewards...");
         let getWarframeData = await warframe.data.getMissionRewards();
@@ -26,4 +27,14 @@ exports.refreshData = async function(warframeDropInfo, warframeRelicInfo, itemKe
         logger.error(err);
         return false;
     }
+}
+
+exports.get_warframe_drop = function() {
+    return warframeDropInfo;
+}
+exports.get_warframe_relic = function() {
+    return warframeRelicInfo;
+}
+exports.get_warframe_itemKey = function() {
+    return itemKeyWords;
 }
