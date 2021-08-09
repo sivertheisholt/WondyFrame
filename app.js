@@ -42,7 +42,9 @@ async function startBot() {
 
 //Restarts bot
 function restartBot() {
-    logger.info("Trying to restart bot because of crash...")
+    logger.log({level: 'info', message: `Trying to restart bot in 5 minutes!`});
+    await new Promise(r => setTimeout(r, 1000 * 60 * 5));
+    logger.log({level: 'info', message: `Restarting bot now!`});
     startBot();
 }
 
