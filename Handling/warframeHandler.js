@@ -2,44 +2,44 @@ const Warframe = require('../API/warframe.js');
 const warframe = new Warframe();
 
 var methods = {
-    getRelicInfo: async function (tier, name, itemName) {
-        return await warframe.getData(`/data/relics/${tier}/${name}`, itemName);
+    getRelicInfo: function (tier, name, itemName) {
+        return warframe.getData(`/data/relics/${tier}/${name}`, itemName);
     },
-    getMissionRewards: async function() {
-        return await warframe.getData(`/data/missionRewards.json`);
+    getMissionRewards: function() {
+        return warframe.getData(`/data/missionRewards.json`);
     },
-    getAllRelicInfo: async function() {
-        return await warframe.getData(`/data/relics.json`);
+    getAllRelicInfo: function() {
+        return warframe.getData(`/data/relics.json`);
     },
-    getCetusBountyRewards: async function() {
-        return await warframe.getData(`/data/cetusBountyRewards.json`);
+    getCetusBountyRewards: function() {
+        return warframe.getData(`/data/cetusBountyRewards.json`);
     },
-    getFortunaBountyRewards: async function() {
-        return await warframe.getData(`/data/solarisBountyRewards.json`);
+    getFortunaBountyRewards: function() {
+        return warframe.getData(`/data/solarisBountyRewards.json`);
     },
-    getDeimosBountyRewards: async function() {
-        return await warframe.getData(`/data/deimosRewards.json`)
+    getDeimosBountyRewards: function() {
+        return warframe.getData(`/data/deimosRewards.json`)
     },
-    getEnemyBlueprintDrops: async function() {
-        return await warframe.getData(`/data/enemyBlueprintTables.json`);
+    getEnemyBlueprintDrops: function() {
+        return warframe.getData(`/data/enemyBlueprintTables.json`);
     },
-    getTransientRewards: async function() {
-        return await warframe.getData(`/data/transientRewards.json`);
+    getTransientRewards: function() {
+        return warframe.getData(`/data/transientRewards.json`);
     },
-    getEnemyModDrops: async function() {
-        return await warframe.getData(`/data/enemyModTables.json`);
+    getEnemyModDrops: function() {
+        return warframe.getData(`/data/enemyModTables.json`);
     },
-    getMiscDrops: async function() {
-        return await warframe.getData(`/data/miscItems.json`);
+    getMiscDrops: function() {
+        return warframe.getData(`/data/miscItems.json`);
     },
-    getSortieRewards: async function() {
-        return await warframe.getData(`/data/sortieRewards.json`);
+    getSortieRewards: function() {
+        return warframe.getData(`/data/sortieRewards.json`);
     },
-    getBuildInfo: async function() {
-        return await warframe.getData(`/data/info.json`);
+    getBuildInfo: function() {
+        return warframe.getData(`/data/info.json`);
     },
-    getWorldState: async function() {
-        return await warframe.getWorldState();
+    getWorldState: function() {
+        return warframe.getWorldState();
     }
 }
 

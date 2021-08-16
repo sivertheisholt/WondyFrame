@@ -1,11 +1,35 @@
 const Discord = require('discord.js');
+const logger = require('../logging/logger');
 
-exports.slashMessage = async function(bot, channelId, messageString, prefix, warframeInfo, warframeRelicInfo, itemKeyWords) {
+exports.slashMessage = async function(bot, interaction, warframeDropLocations, warframeRelicInfo, itemKeyWords) {
+    try {
+        let data = {
+            warframeDropLocations: warframeDropLocations,
+            warframeRelicInfo: warframeRelicInfo,
+            itemKeyWords: itemKeyWords
+        }
+        if(interaction.data.options.length != 0) {
+            for(const option of interaction.data.options) {
+                data[option.name] = option.value;
+            }
+        }
+        let commandFile = require(`../Commands/${interaction.data.name}.js`);
+        const result = await commandFile.run(data);
+        if(typeof result == 'string') {
+            return {content: result}
+        }
+        return  {content: undefined, embeds: [result]};
+    } catch(err) {
+        logger.error(err);
+    }
+
+    /*
+
     const formatMessage = await messageFormatter(messageString, prefix);
-    console.log(formatMessage);
+    
     try {
         let commandFile = require(`../Commands/${formatMessage[0]}.js`);
-        const result = await commandFile.run(formatMessage[1], formatMessage[2], formatMessage[3], warframeInfo, warframeRelicInfo, itemKeyWords);
+        const result = await commandFile.run(formatMessage[1], formatMessage[2], formatMessage[3], warframeDropInfo, warframeRelicInfo, itemKeyWords);
         if(typeof result == 'object') {
             if(formatMessage[0] == "baro") {
                 const apiMessage = await Discord.APIMessage.create(bot.channels.resolve(channelId), new Discord.MessageEmbed(result[0]))
@@ -26,6 +50,7 @@ exports.slashMessage = async function(bot, channelId, messageString, prefix, war
         console.log(err);
         //message.channel.send("Invalid command! Please check wf.help")
     }
+    */
 }
 
 function messageFormatter(message, prefix) {
