@@ -9,10 +9,10 @@ const Discord = require("discord.js");
 /**
  * Searches for specific relic
  * @param {Object} commandData Information about the relic and warframe data
- * @param data.type
- * @param data.name
- * @param data.refinement
- * @param data.warframeDropLocations
+ * @param data.type The relic type
+ * @param data.name The relic name
+ * @param data.refinement The relic refinement
+ * @param data.warframeDropLocations Array of all drop locations
  * @returns {Object} Discord embed
  */
 exports.run = async (commandData) => {
@@ -26,24 +26,23 @@ exports.run = async (commandData) => {
 async function makeResult(commandData) {
     try {
         //Format info correctly
-        console.log(commandData.type)
         commandData.type = helperMethods.data.makeCapitalFirstLettersFromString(commandData.type);
         commandData.name = helperMethods.data.makeCapitalFirstLettersFromString(commandData.name);
         if(commandData.refinement == undefined) {
             commandData.refinement = "Intact";
         }
         commandData.refinement = helperMethods.data.makeCapitalFirstLettersFromString(commandData.refinement);
-        commandData.refinement = relicRefinements.refinements.find(element => element > commandData.refinement);
+        //commandData.refinement = relicRefinements.refinements.find(element => element > commandData.refinement);
 
         //Get the build info (Last time updated)
         const dropTableLastUpdated = await warframe.data.getBuildInfo();
 
         //Get relic info from relic name
         const relicInfo = await warframe.data.getRelicInfo(commandData.type, commandData.name + ".json", `${commandData.type} ${commandData.name}`);
-        
+
         //Sort by chance and check if drops exist
-        const readyTobeUsedData = await sortByChance(commandData.warframeDropLocations.get(`${relicInfo.tier.toLowerCase()} ${relicInfo.name.toLowerCase()} relic (${commandData.refinement != undefined ? commandData.refinement : "Intact"})`));
-        
+        const readyTobeUsedData = await sortByChance(commandData.warframeDropLocations.get(`${relicInfo.tier.toLowerCase()} ${relicInfo.name.toLowerCase()} relic${commandData.refinement != "Intact" ? ` (${commandData.refinement.toLowerCase()})` : ''}`));
+
         //Creates the embed
         const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated, commandData);
         return makeEmbedForRelic;
@@ -96,13 +95,12 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         return relicEmbed;
     }
 
-
     //Relic content
     for (const reward of relicInfo.rewards[commandData.refinement]) {
-        relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chanc).toFixed(2)} %`, true);
+        relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chance).toFixed(2)} %`, true);
     }
 
-    relicEmbed.addField('\u200B', 'Drop locations - Page 1 of ADDPAGESHERE', false)
+    relicEmbed.addField('\u200B', '**Drop locations - Page 1 of ADDPAGESHERE**', false)
 
     let counter = 0;
     for (const location of dropLocations) {
@@ -115,5 +113,24 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         }
     }
 
-    return relicEmbed;
+    let components = [
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        label: "Back",
+                        style: 1,
+                        custom_id: "click_back"
+                    },
+                    {
+                        type: 2,
+                        label: "Next",
+                        style: 1,
+                        custom_id: "click_next"
+                    }
+                ]
+            }
+        ]
+    return {content: undefined, embeds: [relicEmbed], components};
 }

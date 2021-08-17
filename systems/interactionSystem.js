@@ -7,7 +7,6 @@
     logger.debug('Creating new interaction to send')
     
     const result = await messageHandler.slashMessage(bot, interaction, warframeDropInfo, warframeRelicInfo, itemKeyWords)
-    console.log(result);
 
     bot.api.interactions(interaction.id, interaction.token).callback.post({
         data: {
@@ -21,9 +20,9 @@
 exports.interaction_route = function(bot, interaction, warframeDropInfo, warframeRelicInfo, itemKeyWords) {
     logger.debug('Routing interaction')
     if(interaction.data.custom_id != undefined) {
-        logger.debug('Interaction on exisiting message detected')
-        let commandFile = require(`../interactions/${interaction.data.custom_id}.js`);
-        commandFile.run(bot, interaction);
+        logger.debug('Interaction on existing message detected')
+        let commandFile = require(`../interactions/${interaction.message.interaction.name}.js`);
+        commandFile.run(interaction);
     } else {
         interaction_new(bot, interaction, warframeDropInfo, warframeRelicInfo, itemKeyWords);
     }
