@@ -9,19 +9,19 @@ const Discord = require("discord.js");
 /**
  * Searches for specific relic
  * @param {Object} commandData Information about the relic and warframe data
- * @param data.type The relic type
- * @param data.name The relic name
- * @param data.refinement The relic refinement
- * @param data.warframeDropLocations Array of all drop locations
- * @returns {Object} Discord embed
+ * @param commandData.type The relic type
+ * @param commandData.name The relic name
+ * @param commandData.refinement The relic refinement
+ * @param commandData.warframeDropLocations Array of all drop locations
+ * @returns {Promise<Object>} Discord embed
  */
-exports.run = async (commandData) => {
-    return await makeResult(commandData);
+exports.run = (commandData) => {
+    return makeResult(commandData);
 }
 
 /**
  * Creates the result that will be returned.
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 async function makeResult(commandData) {
     try {
@@ -32,6 +32,7 @@ async function makeResult(commandData) {
             commandData.refinement = "Intact";
         }
         commandData.refinement = helperMethods.data.makeCapitalFirstLettersFromString(commandData.refinement);
+        
         //commandData.refinement = relicRefinements.refinements.find(element => element > commandData.refinement);
 
         //Get the build info (Last time updated)
@@ -44,7 +45,7 @@ async function makeResult(commandData) {
         const readyTobeUsedData = await sortByChance(commandData.warframeDropLocations.get(`${relicInfo.tier.toLowerCase()} ${relicInfo.name.toLowerCase()} relic${commandData.refinement != "Intact" ? ` (${commandData.refinement.toLowerCase()})` : ''}`));
 
         //Creates the embed
-        const makeEmbedForRelic = await makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated, commandData);
+        const makeEmbedForRelic = makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated, commandData);
         return makeEmbedForRelic;
     } catch (err) {
         return err;
@@ -72,6 +73,27 @@ function sortByChance(dropLocations) {
 }
 
 async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, commandData) {
+    //Interactive buttons
+    let components = [
+        {
+            type: 1,
+            components: [
+                {
+                    type: 2,
+                    label: "Back",
+                    style: 1,
+                    custom_id: "click_back"
+                },
+                {
+                    type: 2,
+                    label: "Next",
+                    style: 1,
+                    custom_id: "click_next"
+                }
+            ]
+        }
+    ]
+
     //Check refinement
     if(commandData.refinement == undefined) {
         throw "Refinement type provided is not valid";
@@ -80,7 +102,7 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
     //Create the embed
     let relicEmbed = new Discord.MessageEmbed()
                         .setColor(0x0099ff)
-                        .setTitle(`${relicInfo.tier} ${relicInfo.name} ${commandData.refinement}`)
+                        .setTitle(`${relicInfo.tier} ${relicInfo.name} Relic (${commandData.refinement})`)
                         .setDescription(`https://warframe.fandom.com/wiki/${relicInfo.tier}_${relicInfo.name}`)
                         .setThumbnail(relicImageList[commandData.type][commandData.refinement])
                         .setTimestamp(dropTableLastUpdated.modified)
@@ -92,7 +114,7 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         for (const reward of relicInfo.rewards[commandData.refinement]) {
             relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chance).toFixed(2)} %`, true);
         }
-        return relicEmbed;
+        return {content: undefined, embeds: [relicEmbed], components}
     }
 
     //Relic content
@@ -100,7 +122,7 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chance).toFixed(2)} %`, true);
     }
 
-    relicEmbed.addField('\u200B', '**Drop locations - Page 1 of ADDPAGESHERE**', false)
+    relicEmbed.addField('\u200B', `**Drop locations - Page 1 of ${dropLocations.length % 9}**`, false)
 
     let counter = 0;
     for (const location of dropLocations) {
@@ -113,24 +135,5 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         }
     }
 
-    let components = [
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2,
-                        label: "Back",
-                        style: 1,
-                        custom_id: "click_back"
-                    },
-                    {
-                        type: 2,
-                        label: "Next",
-                        style: 1,
-                        custom_id: "click_next"
-                    }
-                ]
-            }
-        ]
     return {content: undefined, embeds: [relicEmbed], components};
 }

@@ -1,22 +1,22 @@
 'use strict';
 
-const axios = require('axios');
+const axios = require('axios').default;
 
 const baseUrl = "https://discord.com/api/v8";
 
 exports.get_original_interaction = async (applicationId, interactionToken) => {
     const url = `${baseUrl}/webhooks/${applicationId}/${interactionToken}/messages/@original`
-    return await sendRequest("GET", url, {});
+    return sendRequest("GET", url, {});
 }
 
-exports.edit_original_interaction = (data) => {
+exports.edit_original_interaction = (applicationId, interactionToken, data) => {
     const url = `${baseUrl}/webhooks/${applicationId}/${interactionToken}/messages/@original`
-    return await sendRequest("PATCH", url, data);
+    return sendRequest("PATCH", url, data);
 }
 
-exports.delete_original_interaction = () => {
+exports.delete_original_interaction = (applicationId, interactionToken) => {
     const url = `${baseUrl}/webhooks/${applicationId}/${interactionToken}/messages/@original`
-    return await sendRequest("DELETE", url, {});
+    return sendRequest("DELETE", url, {});
 }
 
 async function sendRequest(method, url, data) {

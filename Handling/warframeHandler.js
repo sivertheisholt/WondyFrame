@@ -1,3 +1,5 @@
+'use strict';
+
 const Warframe = require('../API/warframe.js');
 const warframe = new Warframe();
 
