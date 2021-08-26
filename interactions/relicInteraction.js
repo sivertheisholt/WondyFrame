@@ -7,25 +7,25 @@ const logger = require('../logging/logger');
 const Discord = require('discord.js');
 
 //Buttons for the interactions with drop locations
-let buttonComponents = [
-    {
+let buttonComponents = {
         type: 1,
         components: [
             {
                 type: 2,
                 label: "Back",
                 style: 1,
-                custom_id: "click_back"
+                custom_id: "click_back",
+                disabled: false
             },
             {
                 type: 2,
                 label: "Next",
                 style: 1,
-                custom_id: "click_next"
+                custom_id: "click_next",
+                disabled: false
             }
         ]
     }
-]
 
 /**
  * This is the main command for a relic interaction
@@ -39,6 +39,10 @@ exports.run = (bot, interactionNew, interactionOld) => {
     //Sending respond that interaction was successfully received
     successRespond(bot, interactionNew.id, interactionNew.token);
 
+    //Setting component to default again because its top-level variable
+    buttonComponents.components[0].disabled = false;
+    buttonComponents.components[1].disabled = false;
+    
     //Get page number [0] is current, [1] is total
     let pageNumbers = interactionNew.message.embeds[0].fields[6].value.match(/\d+/g)
     logger.debug('Page number created');
@@ -60,54 +64,58 @@ exports.run = (bot, interactionNew, interactionOld) => {
     //Make a new MessageEmbed
     let relicEmbed = new Discord.MessageEmbed(interactionNew.message.embeds[0]);
     
-    if(pageNumbers[0] == pageNumbers[1]) {
-        //Do nothing - This should not happen
-        //Button will not be available, but im putting a check here just in case
-    } else {
-        switch(interactionNew.data.custom_id) {
-            case 'click_next':
-                let dataNext = buttonNext(relicEmbed, relicDropLocations, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
-                discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataNext);
-                break;
-            case 'click_back':
-                let dataBack = buttonBack(relicEmbed, relicDropLocations, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
-                discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataBack);
-                break;
-            default:
-                logger.error('Could not identify interaction button - relicInteraction.js');
-                break;
-        }
+    //Run correct event
+    switch(interactionNew.data.custom_id) {
+        case 'click_next':
+            //Make next button disabled if next interaction is on last page
+            if(parseInt(pageNumbers[0]) + 1 === parseInt(pageNumbers[1])) {
+                buttonComponents.components[1].disabled = true;
+            }
+            let dataNext = buttonNext(relicEmbed, relicDropLocations, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
+            discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataNext);
+            break;
+        case 'click_back':
+            //Make back button disabled if next interaction is on first page
+            if(parseInt(pageNumbers[0]) - 1 === 1) {
+                buttonComponents.components[0].disabled = true;
+            }
+            let dataBack = buttonBack(relicEmbed, relicDropLocations, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
+            discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataBack);
+            break;
+        default:
+            logger.error('Could not identify interaction button - relicInteraction.js');
+            break;
     }
 }
 
 /**
  * Handles the PATCH request and data for the "next" interaction
- * @param {Object} embed 
- * @param {Array|String} drops 
- * @param {Number} currentPage 
- * @param {Number} lastPage 
- * @returns 
+ * @param {Object} embed The new discord embed
+ * @param {Array|String} drops Drops for the current relic
+ * @param {Number} currentPage Current page we are on
+ * @param {Number} lastPage Last page
+ * @returns Contains the new data for the old interaction
  */
 function buttonNext(embed, drops, currentPage, lastPage) {
     removeDropFields(embed)
     getNextNine(embed, drops, currentPage);
     embed.fields[6].value = `**Drop locations - Page ${currentPage+1} of ${lastPage}**`
-    return {content: undefined, embeds: [embed], buttonComponents}
+    return {content: undefined, embeds: [embed], components: [buttonComponents]}
 }
 
 /**
  * Handles the PATCH request and data for the "back" interaction
- * @param {Object} embed 
- * @param {Array|String} drops 
- * @param {Number} currentPage 
- * @param {Number} lastPage 
+ * @param {Object} embed The new discord embed
+ * @param {Array|String} drops Drops for the current relic
+ * @param {Number} currentPage Current page we are on
+ * @param {Number} lastPage Last page
  * @returns {Object} Contains the new data for the old interaction
  */
 function buttonBack(embed, drops, currentPage, lastPage) {
     removeDropFields(embed)
     getLastNine(embed, drops, currentPage);
     embed.fields[6].value = `**Drop locations - Page ${currentPage-1} of ${lastPage}**`
-    return {content: undefined, embeds: [embed], buttonComponents}
+    return {content: undefined, embeds: [embed], components: [buttonComponents]}
 }
 
 /**
@@ -168,6 +176,12 @@ function sortByChance(dropLocations) {
     return dropLocations;
 }
 
+/**
+ * Responds to interaction with DEFERRED_UPDATE_MESSAGE* type
+ * @param {Object} bot The bot client
+ * @param {String} interactionId Interaction id of the new interaction
+ * @param {String} interactionToken Interaction token of the new interaction
+ */
 function successRespond(bot, interactionId, interactionToken) {
     bot.api.interactions(interactionId, interactionToken).callback.post({
         data: {

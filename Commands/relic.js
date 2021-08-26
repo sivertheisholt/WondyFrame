@@ -74,25 +74,25 @@ function sortByChance(dropLocations) {
 
 async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, commandData) {
     //Interactive buttons
-    let components = [
-        {
+    let buttonComponents = {
             type: 1,
             components: [
                 {
                     type: 2,
                     label: "Back",
                     style: 1,
-                    custom_id: "click_back"
+                    custom_id: "click_back",
+                    disabled: true
                 },
                 {
                     type: 2,
                     label: "Next",
                     style: 1,
-                    custom_id: "click_next"
+                    custom_id: "click_next",
+                    disabled: false
                 }
             ]
         }
-    ]
 
     //Check refinement
     if(commandData.refinement == undefined) {
@@ -114,7 +114,7 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         for (const reward of relicInfo.rewards[commandData.refinement]) {
             relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chance).toFixed(2)} %`, true);
         }
-        return {content: undefined, embeds: [relicEmbed], components}
+        return {content: undefined, embeds: [relicEmbed], components: [buttonComponents]}
     }
 
     //Relic content
@@ -135,5 +135,5 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
         }
     }
 
-    return {content: undefined, embeds: [relicEmbed], components};
+    return {content: undefined, embeds: [relicEmbed], components: [buttonComponents]};
 }
