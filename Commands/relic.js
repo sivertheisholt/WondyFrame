@@ -33,6 +33,9 @@ async function makeResult(commandData) {
         }
         commandData.refinement = helperMethods.data.makeCapitalFirstLettersFromString(commandData.refinement);
         
+        /**
+         * Todo: Make refinement "searchable" - No need for exact input
+         */
         //commandData.refinement = relicRefinements.refinements.find(element => element > commandData.refinement);
 
         //Get the build info (Last time updated)

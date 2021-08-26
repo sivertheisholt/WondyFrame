@@ -1,60 +1,77 @@
-exports.run = async (args1, args2, args3, warframeDropLocations, itemKeyWords) => {
-    const warframe = require('../Handling/warframeHandler');
-    const WorldState = require('warframe-worldstate-parser');
-    const helperMethods = require('../Handling/helperMethods');
+const warframe = require('../Handling/warframeHandler');
+const WorldState = require('warframe-worldstate-parser');
+const helperMethods = require('../Handling/helperMethods');
+const Discord = require("discord.js");
+const logger = require('../logging/logger');
 
-    async function createEmbed(worldState, worldStateTimestamp) {
-        const baroEmbed1 = {
-            color: 0x0099ff,
-            title: `Baro Ki'Teer`,
-            thumbnail: {
-                url: "https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/baro-ki'teer-glyph.png",
-            },
-            fields: [],
-        };
-        const baroEmbed2 = {
-            color: 0x0099ff,
-            thumbnail: {
-                url: "https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/baro-ki'teer-glyph.png",
-            },
-            fields: [],
-            timestamp: worldStateTimestamp,
-            footer: {
-                text: 'World state updated:'
-            },
-        };
+let buttonComponents = {
+    type: 1,
+    components: [
+        {
+            type: 2,
+            label: "Back",
+            style: 1,
+            custom_id: "click_back",
+            disabled: true
+        },
+        {
+            type: 2,
+            label: "Next",
+            style: 1,
+            custom_id: "click_next",
+            disabled: false
+        }
+    ]
+}
+
+exports.run = () => {
+    return makeResult();
+}
+
+async function makeResult() {
+    try {
+        //Getting current world state
+        const worldStateData = await warframe.data.getWorldState();
         
+        //Parse data to WorldState object
+        const ws = new WorldState(JSON.stringify(worldStateData));
+        
+        //Create the embed
+        const makeBaroEmbed = createEmbed(ws.voidTrader, ws.timestamp);
+        return makeBaroEmbed;
+    } catch(err) {
+        logger.error(err);
+        return 'Something unexpected happen when trying to run the command!';
+    }
+}
+
+function createEmbed(worldState, worldStateTimestamp) {
+    let baroEmbed1 = new Discord.MessageEmbed()
+                        .setTitle(`Baro Ki'Teer`)
+                        .setColor(0x0099ff)
+                        .setThumbnail("https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/baro-ki'teer-glyph.png")
+                        .setTimestamp(worldStateTimestamp)
+                        .setFooter('World state updated:');
+
+    if(worldState.active) {
+        //Set default content to embed
+        baroEmbed1.addField("Location", worldState.location, true)
+            .addField("Baro will leave in", worldState.endString, true)
+            .addField('\u200B', '\u200B', true)
+            .addField('\u200B', '**Inventory - Page 1 of 2**');
+
+        //Push inventory to embed
         let counter = 0;
-        if(worldState.active) {
-            baroEmbed1.fields.push({name: "Location", value: worldState.location, inline: true,});
-            baroEmbed1.fields.push({name: "Baro will leave in", value: worldState.endString, inline: true,});
-            baroEmbed1.fields.push({name: '\u200B', value: '\u200B', inline: true,});
-            for(const inventory of worldState.inventory) {
-                if(counter >= 15) {
-                    baroEmbed2.fields.push({name: inventory.item, value: `Ducats: ${inventory.ducats} \n Credits: ${(helperMethods.data.makeNumberWithCommas(inventory.credits))}`, inline: true,});
-                } else {
-                    baroEmbed1.fields.push({name: inventory.item, value: `Ducats: ${inventory.ducats} \n Credits: ${(helperMethods.data.makeNumberWithCommas(inventory.credits))}`, inline: true,});
-                    counter++;
-                }
-            }
-        } else {
-            baroEmbed1.fields.push({name: "Location", value: worldState.location, inline: false,});
-            baroEmbed1.fields.push({name: "Baro will arrive in", value: worldState.startString, inline: false,});
-            baroEmbed1.timestamp = worldStateTimestamp;
-            baroEmbed1.footer = {text: 'World state updated:'};
+        for(const item of worldState.inventory) {
+            if(counter >= 15) break;
+            baroEmbed1.addField(item.item, `Ducats: ${item.ducats} \n Credits: ${(helperMethods.data.makeNumberWithCommas(item.credits))}`, true);
+            counter++;
         }
-        return [baroEmbed1, baroEmbed2];
+        return {content: undefined, embeds: [baroEmbed1], components: [buttonComponents]}
+    } else {
+        //Create embed for arrival time
+        baroEmbed1.addField('Location', worldState.location, false)
+        .addField('Baro will arrive in', worldState.startString, false)
+        return {content: undefined, embeds: [baroEmbed1]}
     }
-    
-    async function postResult() {
-        try {
-            const worldStateData = await warframe.data.getWorldState();
-            const ws = new WorldState(JSON.stringify(worldStateData));
-            const makeBaroEmbed = await createEmbed(ws.voidTrader, ws.timestamp);
-            return makeBaroEmbed;
-        } catch(err) {
-            return err;
-        }
-    }
-    return await postResult();
 }

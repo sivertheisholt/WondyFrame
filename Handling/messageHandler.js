@@ -8,7 +8,7 @@ exports.slashMessage = async function(bot, interaction, warframeDropLocations, w
             warframeRelicInfo: warframeRelicInfo,
             itemKeyWords: itemKeyWords
         }
-        if(interaction.data.options.length != 0) {
+        if(interaction.data.options != undefined) {
             for(const option of interaction.data.options) {
                 data[option.name] = option.value;
             }
