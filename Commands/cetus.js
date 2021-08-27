@@ -25,7 +25,7 @@ async function makeResult() {
         //Parse data
         const ws = new WorldState(JSON.stringify(worldStateData));
 
-        //Create the embed
+        //Create interaction data
         const makeCetusEmbed = await createEmbed(ws.cetusCycle, ws.timestamp);
         return makeCetusEmbed;
     } catch(err) {
