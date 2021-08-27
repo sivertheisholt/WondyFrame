@@ -1,3 +1,5 @@
+'use strict';
+
 const warframe = require('../Handling/warframeHandler');
 const WorldState = require('warframe-worldstate-parser');
 const helperMethods = require('../Handling/helperMethods');
@@ -24,10 +26,18 @@ let buttonComponents = {
     ]
 }
 
+/**
+ * Gets baro info
+ * @returns {Promise<Object>} Discord interaction data
+ */
 exports.run = () => {
     return makeResult();
 }
 
+/**
+ * Gathers the required information that will be used to create the interaction data 
+ * @returns {Promise<Object|String>} The interaction data that will responded to the user
+ */
 async function makeResult() {
     try {
         //Getting current world state
@@ -45,6 +55,12 @@ async function makeResult() {
     }
 }
 
+/**
+ * This function creates the data using the required information
+ * @param {Object} worldState The world state object
+ * @param {Object} worldStateTimestamp The world state timestamp
+ * @returns {Object} Interaction data
+ */
 function createEmbed(worldState, worldStateTimestamp) {
     let baroEmbed1 = new Discord.MessageEmbed()
                         .setTitle(`Baro Ki'Teer`)

@@ -5,6 +5,7 @@ const helperMethods = require('../Handling/helperMethods');
 const relicImageList = require('../Storage/ImageMapping/relicImage.json');
 const relicRefinements = require('../Storage/refinements.json');
 const Discord = require("discord.js");
+const logger = require('../logging/logger');
 
 /**
  * Searches for specific relic
@@ -13,7 +14,7 @@ const Discord = require("discord.js");
  * @param commandData.name The relic name
  * @param commandData.refinement The relic refinement
  * @param commandData.warframeDropLocations Array of all drop locations
- * @returns {Promise<Object>} Discord embed
+ * @returns {Promise<Object|String>} Discord interaction data
  */
 exports.run = (commandData) => {
     return makeResult(commandData);
@@ -21,7 +22,7 @@ exports.run = (commandData) => {
 
 /**
  * Creates the result that will be returned.
- * @returns {Promise<Object>}
+ * @returns {Promise<Object|String>}
  */
 async function makeResult(commandData) {
     try {
@@ -51,6 +52,7 @@ async function makeResult(commandData) {
         const makeEmbedForRelic = makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated, commandData);
         return makeEmbedForRelic;
     } catch (err) {
+        logger.error(err);
         return err;
     }
 }
