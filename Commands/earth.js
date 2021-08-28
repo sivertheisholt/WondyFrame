@@ -1,3 +1,4 @@
+'user strict';
 
 const warframe = require('../Handling/warframeHandler');
 const WorldState = require('warframe-worldstate-parser');
@@ -5,8 +6,8 @@ const Discord = require("discord.js");
 const logger = require('../logging/logger');
 
 /**
- * Gets deimos information
- * @returns {Promise<Object>} Discord interaction data
+ * Gets earth information
+ * @returns {Promise<Object|String>} Discord interaction data
  */
  exports.run = () => {
     return makeResult();
@@ -25,9 +26,10 @@ async function makeResult() {
         const ws = new WorldState(JSON.stringify(worldStateData));
 
         //Create interaction data
-        const makeEarthEmbed = await createEmbed(ws.earthCycle, ws.timestamp);
+        const makeEarthEmbed = createEmbed(ws.earthCycle, ws.timestamp);
         return makeEarthEmbed;
     } catch(err) {
+        logger.error(err);
         return err;
     }
 }

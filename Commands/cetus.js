@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const warframe = require('../Handling/warframeHandler');
 const WorldState = require('warframe-worldstate-parser');
@@ -26,7 +26,7 @@ async function makeResult() {
         const ws = new WorldState(JSON.stringify(worldStateData));
 
         //Create interaction data
-        const makeCetusEmbed = await createEmbed(ws.cetusCycle, ws.timestamp);
+        const makeCetusEmbed = createEmbed(ws.cetusCycle, ws.timestamp);
         return makeCetusEmbed;
     } catch(err) {
         logger.error(err);
