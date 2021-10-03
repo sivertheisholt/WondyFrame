@@ -61,7 +61,7 @@ var methods = {
                 addRewards("Deimos", bounty.bountyLevel, bounty.rewards, "Bounty");
             }
             for(const enemyBlueprintDrop of t5.enemyBlueprintTables) {
-                addRewardsEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance.slice(4));
+                addRewardsEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance);
             }
             for(const transientRewards of t6.transientRewards) {
                 addRewards(transientRewards.objectiveName, null, transientRewards.rewards, "Transient", null);
