@@ -7,10 +7,6 @@ Invite link: https://discord.com/api/oauth2/authorize?client_id=7624866689295319
 
 Under you can see a few commands. 
 
-(This code is ugly and outdated - Need rework)
-
-
-
 -----
 
 ## Commands  
