@@ -1,7 +1,7 @@
 'use strict'
 
-const warframe = require('../Handling/warframeHandler');
-const helperMethods = require('../Handling/helperMethods');
+const warframe = require('../handling/warframeHandler');
+const helperMethods = require('../handling/helperMethods');
 const fetch = require('node-fetch');
 const Discord = require("discord.js");
 const logger = require('../logging/logger');

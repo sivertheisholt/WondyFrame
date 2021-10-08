@@ -1,7 +1,7 @@
 exports.run = async (relicType, relicName, relicRefinement, warframeDropLocations) => {
-    const warframe = require('../Handling/warframeHandler');
-    const helperMethods = require('../Handling/helperMethods');
-    const relicImageList = require('../Storage/ImageMapping/relicImage.json');
+    const warframe = require('../handling/warframeHandler');
+    const helperMethods = require('../handling/helperMethods');
+    const relicImageList = require('../storage/ImageMapping/relicImage.json');
     
 
     

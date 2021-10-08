@@ -2,8 +2,8 @@
 
 const warframe = require('../handling/warframeHandler');
 const helperMethods = require('../handling/helperMethods');
-const relicImageList = require('../Storage/ImageMapping/relicImage.json');
-const relicRefinements = require('../Storage/refinements.json');
+const relicImageList = require('../storage/ImageMapping/relicImage.json');
+const relicRefinements = require('../storage/refinements.json');
 const Discord = require("discord.js");
 const logger = require('../logging/logger');
 

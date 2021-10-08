@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require('../logging/logger');
-const commandList = require('../Storage/commands.json');
+const commandList = require('../storage/commands.json');
 const debugCommands = require('../utils/debug');
 
 exports.bot_ready = function(bot) {

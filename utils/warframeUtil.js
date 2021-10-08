@@ -1,8 +1,8 @@
 "use strict";
 
 const logger = require('../logging/logger');
-const warframe = require('../handling/warframeHandler.js.js');
-const sortWarframeData = require('../handling/sortWarframeData.js.js');
+const warframe = require('../handling/warframeHandler.js');
+const sortWarframeData = require('../handling/sortWarframeData.js');
 let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 
 exports.refreshData = async function() {

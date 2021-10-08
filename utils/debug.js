@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require('../logging/logger');
-const commandList = require('../Storage/commands.json');
+const commandList = require('../storage/commands.json');
 
 //Delete commands from specific guild
 exports.slash_delete_guild = async function(bot, guildId) {

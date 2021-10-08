@@ -1,8 +1,8 @@
 'use strict';
 
 const warframeUtil = require('../utils/warframeUtil'); 
-const discordApi = require('../API/discord');
-const helperMethods = require('../Handling/helperMethods');
+const discordApi = require('../api/discord');
+const helperMethods = require('../handling/helperMethods');
 const logger = require('../logging/logger');
 const Discord = require('discord.js');
 

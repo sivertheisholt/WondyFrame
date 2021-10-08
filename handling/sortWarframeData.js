@@ -1,4 +1,4 @@
-const dojoItems = require('../Storage/customItems/shopitems.json')
+const dojoItems = require('../storage/customItems/shopitems.json')
 var methods = {
     sortData: async function (t, t2, t3, t4, t5, t6, t7, t8, t9) {
         return new Promise((resolve, reject) => {

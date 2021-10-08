@@ -1,8 +1,8 @@
 'use strict';
 
-const warframe = require('../Handling/warframeHandler');
+const warframe = require('../handling/warframeHandler');
 const WorldState = require('warframe-worldstate-parser');
-const helperMethods = require('../Handling/helperMethods');
+const helperMethods = require('../handling/helperMethods');
 const Discord = require("discord.js");
 const logger = require('../logging/logger');
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const Warframe = require('../api/warframe.js.js');
+const Warframe = require('../api/warframe.js');
 const warframe = new Warframe();
 
 var methods = {
