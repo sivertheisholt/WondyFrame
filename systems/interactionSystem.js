@@ -1,6 +1,6 @@
  "use strict";
 
- const messageHandler = require('../Handling/messageHandler.js');
+ const messageHandler = require('../handling/messageHandler.js');
  const logger = require('../logging/logger');
  let interactionMap = new Map();
 
