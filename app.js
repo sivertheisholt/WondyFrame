@@ -32,7 +32,7 @@ async function startBot() {
 
         //Set interval for refresh of warframe info
         setInterval(async function() {
-            const values = await refreshData.refreshData(warframeDropInfo, warframeRelicInfo, itemKeyWords);
+            const values = await refreshData.refreshData();
             if(!values) throw new Error("Could not retrieve warframe information");
         }, 21600000)
     } catch(err) {

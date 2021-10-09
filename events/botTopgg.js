@@ -3,7 +3,7 @@
 const AutoPoster = require('topgg-autoposter')
 const logger = require('../logging/logger');
 
-exports.bot_topgg = function() {
+exports.bot_topgg = function(bot) {
     if(process.env.NODE_ENV.toUpperCase() === 'PRODUCTION') {
         const ap = AutoPoster(process.env.TOPGG_TOKEN, bot)
         ap.on('posted', () => {
