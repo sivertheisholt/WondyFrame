@@ -1,3 +1,5 @@
+'use strict'
+
 exports.run = async (args, func) => {
     function createHelpEmbed() {
         const helpEmbed = {

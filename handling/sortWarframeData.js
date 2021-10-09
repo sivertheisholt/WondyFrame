@@ -1,3 +1,5 @@
+'use strict'
+
 const dojoItems = require('../storage/customItems/shopitems.json')
 var methods = {
     sortData: async function (t, t2, t3, t4, t5, t6, t7, t8, t9) {
@@ -61,7 +63,7 @@ var methods = {
                 addRewards("Deimos", bounty.bountyLevel, bounty.rewards, "Bounty");
             }
             for(const enemyBlueprintDrop of t5.enemyBlueprintTables) {
-                addRewardsEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance.slice(4));
+                addRewardsEnemy(enemyBlueprintDrop.enemyName, null, enemyBlueprintDrop.items, "Enemy", enemyBlueprintDrop.blueprintDropChance);
             }
             for(const transientRewards of t6.transientRewards) {
                 addRewards(transientRewards.objectiveName, null, transientRewards.rewards, "Transient", null);

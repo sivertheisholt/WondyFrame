@@ -34,7 +34,7 @@ exports.interaction_route = function(bot, interaction, warframeDropInfo, warfram
                 let commandFile = require(`../interactions/${interaction.message.interaction.name}Interaction.js`);
                 commandFile.run(interaction);
             } else {
-    
+                //TODO
             }
         //If debug mode, skip 15m check
         } else {

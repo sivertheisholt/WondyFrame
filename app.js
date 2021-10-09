@@ -19,7 +19,8 @@ async function startBot() {
         //Create bot
         const bot = new Discord.Client({
             autoReconnect: true,
-            unknownCommandResponse: false
+            unknownCommandResponse: false,
+            intents: [Discord.Intents.FLAGS.GUILDS]
         });
     
         //Initialize systems

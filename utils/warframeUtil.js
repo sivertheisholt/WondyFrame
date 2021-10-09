@@ -5,6 +5,8 @@ const warframe = require('../handling/warframeHandler.js');
 const sortWarframeData = require('../handling/sortWarframeData.js');
 let warframeDropInfo, warframeRelicInfo, itemKeyWords;
 
+
+//TODO - Rewrite
 exports.refreshData = async function() {
     try {
         logger.info("Getting mission rewards and relic rewards...");

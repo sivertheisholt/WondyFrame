@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 
 const warframe = require('../handling/warframeHandler');
 const WorldState = require('warframe-worldstate-parser');

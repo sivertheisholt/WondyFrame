@@ -1,3 +1,5 @@
+'use strict'
+
 const Discord = require('discord.js');
 const logger = require('../logging/logger');
 
@@ -13,7 +15,7 @@ exports.slashMessage = async function(bot, interaction, warframeDropLocations, w
                 data[option.name] = option.value;
             }
         }
-        let commandFile = require(`../Commands/${interaction.data.name}.js`);
+        let commandFile = require(`../commands/${interaction.data.name}.js`);
         const result = await commandFile.run(data);
         if(typeof result == 'string') {
             return {content: result}
