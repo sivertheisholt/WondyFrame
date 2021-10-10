@@ -13,14 +13,14 @@ let buttonComponents = {
     components: [
         {
             type: 2,
-            label: "Back",
+            label: "Previous page",
             style: 1,
             custom_id: "click_back",
             disabled: false
         },
         {
             type: 2,
-            label: "Next",
+            label: "Next page",
             style: 1,
             custom_id: "click_next",
             disabled: false
@@ -121,7 +121,6 @@ function buttonBack(embed, voidTrader, currentPage, lastPage) {
  * @param {Array} inventory The inventory to use
  */
 function getNext(embed, inventory) {
-    console.log(inventory.length)
     let newInventory = inventory.slice(inventory.length/2 + 0.5);
     for(const item of newInventory) {
         embed.addField(item.item, `Ducats: ${item.ducats} \n Credits: ${(helperMethods.data.makeNumberWithCommas(item.credits))}`, true);

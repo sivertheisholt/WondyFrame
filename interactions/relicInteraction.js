@@ -12,14 +12,14 @@ let buttonComponents = {
         components: [
             {
                 type: 2,
-                label: "Back",
+                label: "Previous page",
                 style: 1,
                 custom_id: "click_back",
                 disabled: false
             },
             {
                 type: 2,
-                label: "Next",
+                label: "Next page",
                 style: 1,
                 custom_id: "click_next",
                 disabled: false

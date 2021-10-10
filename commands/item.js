@@ -39,8 +39,8 @@ async function makeResult(commandData) {
             return makeEmbedForPrimeResult;
         } else {
             //Non prime item
-            const getDropLocationsForItem = await commandData.warframeDropLocations.get(tryToFindKey);
-            const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
+            //const getDropLocationsForItem = await commandData.warframeDropLocations.get(tryToFindKey);
+            //const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
             const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(tryToFindKey, readyTobeUsedData, dropTableLastUpdated)
             return makeEmbedForNonPrimeResult;
         }
@@ -110,6 +110,8 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
     //Relics
     primeEmbed.addField('\u200B', `**Relics - Relic 1 of ${relics.length}**`, false)
 
+    let currentRelic;
+
     //Add relic to embed
     for (const relic of relics) {
         
@@ -123,24 +125,24 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
                             \nExpected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}
                             \nVaulted: ${relic.vaulted}`,
                             true)
+        currentRelic = relic;
         break;
     }
 
     //Add drop locations
     if(!isVaulted) {
-        for(const relic of relics) {
-            if(relic.state == "Intact" && relic.vaulted == "No") {
-                let getDropLocations = dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`);
-                let sortedAfterChance = sortByChance(getDropLocations);
-                let counterMaxSix = 0;
-                primeEmbed.addField('\u200B', `**Top 6 drop locations for: ${relic.tier} ${relic.relicName}**`, false)
-                for(const location of sortedAfterChance) {
-                    if(counterMaxSix == 6) break;
-                    if(location.isEvent) continue;
-                    primeEmbed.fields.push({name: location.planet + " - " + location.node, value: "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`, inline: true,});
-                    counterMaxSix++;
-                }
-            }
+        primeEmbed.addField('\u200B', `**Drop locations - Page 1 of ${relics.length} **`, false)
+        let getDropLocations = dropLocations.get(`${(currentRelic.tier).toLowerCase()} ${(currentRelic.relicName).toLowerCase()} relic`);
+        let sortedAfterChance = sortByChance(getDropLocations);
+        let counterMaxSix = 0;
+        for(const location of sortedAfterChance) {
+            if(counterMaxSix == 6) break;
+            if(location.isEvent) continue;
+            if(relics.vaulted == "Yes") continue;
+            primeEmbed.addField(location.planet + " - " + location.node,
+                    "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`,
+                    true)
+            counterMaxSix++;
         }
     }
     return {content: undefined, embeds: [primeEmbed], components: [buttonComponents]}
@@ -149,7 +151,7 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
 /**
  * Check if drops exist and sorts by chance
  * @param {Array} dropLocations 
- * @returns 
+ * @returns {String|Array} Vaulted if undefined, else drop locations sorted
  */
  function sortByChance(dropLocations) {
     //Check if drop locations exist
@@ -175,6 +177,27 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
 
 
     async function makeEmbedForNonPrime(itemName, dropLocations, dropTableLastUpdated) {
+        let buttonComponents = {
+            type: 1,
+            components: [
+                {
+                    type: 2,
+                    label: "Previous page",
+                    style: 1,
+                    custom_id: "item_back_drops",
+                    disabled: true
+                },
+                {
+                    type: 2,
+                    label: "Next page",
+                    style: 1,
+                    custom_id: "item_next_drops",
+                    disabled: false
+                }
+            ]
+        }
+
+
         const nonPrimeEmbed = {
             color: 0x0099ff,
             title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),

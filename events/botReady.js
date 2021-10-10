@@ -7,7 +7,7 @@ const debugCommands = require('../utils/debug');
 exports.bot_ready = function(bot) {
     bot.on('ready', async () => {
         logger.info(`Logged in as ${bot.user.tag}!`);
-        bot.user.setActivity('wf.help');
+        bot.user.setActivity('Use slash(/) commands!');
 
         //Adding slash commands
         for(const command of commandList) {

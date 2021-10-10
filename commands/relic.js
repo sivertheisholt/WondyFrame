@@ -84,14 +84,14 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
             components: [
                 {
                     type: 2,
-                    label: "Back",
+                    label: "Last page",
                     style: 1,
                     custom_id: "click_back",
                     disabled: true
                 },
                 {
                     type: 2,
-                    label: "Next",
+                    label: "Next page",
                     style: 1,
                     custom_id: "click_next",
                     disabled: false
