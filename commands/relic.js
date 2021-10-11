@@ -49,7 +49,7 @@ async function makeResult(commandData) {
         const readyTobeUsedData = await sortByChance(commandData.warframeDropLocations.get(`${relicInfo.tier.toLowerCase()} ${relicInfo.name.toLowerCase()} relic${commandData.refinement != "Intact" ? ` (${commandData.refinement.toLowerCase()})` : ''}`));
 
         //Creates the embed
-        const makeEmbedForRelic = makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated, commandData);
+        const makeEmbedForRelic = makeEmbed(relicInfo, readyTobeUsedData, dropTableLastUpdated.modified, commandData);
         return makeEmbedForRelic;
     } catch (err) {
         logger.error(err);
@@ -77,7 +77,15 @@ function sortByChance(dropLocations) {
     return dropLocations;
 }
 
-async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, commandData) {
+/**
+ * Creates the interaction data
+ * @param {Object} relicInfo The relic information
+ * @param {Array|String} dropLocations Drop locations
+ * @param {Number} dropTableLastUpdated When droptables was updated
+ * @param {Object} commandData Information about the relic and warframe data
+ * @returns {Object} Interaction
+ */
+function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, commandData) {
     //Interactive buttons
     let buttonComponents = {
             type: 1,
@@ -110,7 +118,7 @@ async function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, command
                         .setTitle(`${relicInfo.tier} ${relicInfo.name} Relic (${commandData.refinement})`)
                         .setDescription(`https://warframe.fandom.com/wiki/${relicInfo.tier}_${relicInfo.name}`)
                         .setThumbnail(relicImageList[commandData.type][commandData.refinement])
-                        .setTimestamp(dropTableLastUpdated.modified)
+                        .setTimestamp(dropTableLastUpdated)
                         .setFooter("Drop tables updated: ");
 
     //If relic is vaulted, only add relic content and message

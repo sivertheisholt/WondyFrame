@@ -2,7 +2,6 @@
 
 const warframe = require('../handling/warframeHandler');
 const helperMethods = require('../handling/helperMethods');
-const fetch = require('node-fetch');
 const Discord = require("discord.js");
 const logger = require('../logging/logger');
 
@@ -19,29 +18,31 @@ const logger = require('../logging/logger');
     return makeResult(commandData);
 }
 
+/**
+ * Creates the result that will be returned.
+ * @returns {Promise<Object|String>}
+ */
 async function makeResult(commandData) {
     try {
         //Get drop table update time
         const dropTableLastUpdated = await warframe.data.getBuildInfo();
 
         //Try to find item name
-        const tryToFindKey = await helperMethods.data.searchForItemInMap(commandData.itemName, commandData.warframeDropLocations);
+        const tryToFindKey = await helperMethods.data.searchForItemInMap(commandData.item, commandData.warframeRelicInfo);
 
         //Check if drop location is found
         if(tryToFindKey == undefined) {
-            throw `Sorry I can't find any drop locations for: ${commandData.itemName}`;
+            throw `Sorry I can't find any drop locations for: ${commandData.item}`;
         }
 
         //Check if item search is prime or not
-        if(commandData.itemName.search("prime") !== -1) {
+        if(tryToFindKey.search("prime") !== -1) {
             //Prime item
-            const makeEmbedForPrimeResult = await createEmbedForPrime(tryToFindKey, commandData.warframeRelicInfo.get(tryToFindKey), commandData.warframeDropLocations, dropTableLastUpdated);
+            const makeEmbedForPrimeResult = createEmbedForPrime(tryToFindKey, commandData.warframeRelicInfo.get(tryToFindKey), commandData.warframeDropLocations, dropTableLastUpdated.modified, commandData.vaulted);
             return makeEmbedForPrimeResult;
         } else {
             //Non prime item
-            //const getDropLocationsForItem = await commandData.warframeDropLocations.get(tryToFindKey);
-            //const readyTobeUsedData = await getTopNine(getDropLocationsForItem);
-            const makeEmbedForNonPrimeResult = await makeEmbedForNonPrime(tryToFindKey, readyTobeUsedData, dropTableLastUpdated)
+            const makeEmbedForNonPrimeResult = makeEmbedForNonPrime(tryToFindKey, sortByChance(commandData.warframeDropLocations.get(tryToFindKey)), dropTableLastUpdated.modified)
             return makeEmbedForNonPrimeResult;
         }
     } catch(err) {
@@ -49,7 +50,19 @@ async function makeResult(commandData) {
     }
 }
 
+/**
+ * Creates the interaction data for prime item
+ * @param {String} itemName The name of the item
+ * @param {Array} relics The relics for the item
+ * @param {Object} dropLocations The drop locations
+ * @param {Number} dropTableLastUpdated When drop tables was last updated
+ * @param {String} showVaulted To show vaulted or not
+ * @returns {Object} Interaction data
+ */
 function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdated, showVaulted) {
+    let isVaulted = true;
+    let relicsToUse = [];
+    let currentRelic;
     let buttonComponents = {
         type: 1,
         components: [
@@ -83,15 +96,19 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
             }
         ]
     }
-    let isVaulted = true;
 
     //Check if vaulted - check for drop locations
-    for(const relic of relics) {
+    for(let relic of relics) {
+        if(relic.state != "Intact") {
+            continue;
+        }
         if(dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`) !== undefined) {
             relic.vaulted = "No";
             isVaulted = false;
+            relicsToUse.push(relic);
         } else {
             relic.vaulted = "Yes";
+            relicsToUse.push(relic);
         }
     }
 
@@ -99,7 +116,7 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
     let primeEmbed = new Discord.MessageEmbed()
                         .setColor(0x0099ff)
                         .setTitle(helperMethods.data.makeCapitalFirstLettersFromString(itemName))
-                        .setTimestamp(dropTableLastUpdated.modified)
+                        .setTimestamp(dropTableLastUpdated)
                         .setFooter('Drop tables updated: ')
     
     //Check if vaulted
@@ -108,25 +125,30 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
     }
 
     //Relics
-    primeEmbed.addField('\u200B', `**Relics - Relic 1 of ${relics.length}**`, false)
+    if(!isVaulted) {
+        primeEmbed.addField('\u200B', `**Relic 1 of ${relicsToUse.length}**`, false)
+    }
 
-    let currentRelic;
-
+    //Check size
+    if(relicsToUse.length == 1) {
+        buttonComponents.components[3].disabled = true;
+    }
+    
     //Add relic to embed
-    for (const relic of relics) {
+    for (const relic of relicsToUse) {
         
         //Check if relic is intact refinement
         if(relic.state != "Intact") continue;
 
         //Add relic
         primeEmbed.addField(`${relic.tier} ${relic.relicName}`,
-                            `Rarity: ${relic.rarity} 
-                            \nChance: ${(relic.chance).toFixed(3)}%
-                            \nExpected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}
-                            \nVaulted: ${relic.vaulted}`,
+                            `Rarity: ${relic.rarity}\nChance: ${(relic.chance).toFixed(3)}%\nExpected Runs: ${helperMethods.data.getExpectedRuns((relic.chance))}\nVaulted: ${relic.vaulted}`,
                             true)
         currentRelic = relic;
-        break;
+        if(!isVaulted) break;
+    }
+    if(relicsToUse.length % 2 != 0) {
+        primeEmbed.addField('\u200B', '\u200B', true);
     }
 
     //Add drop locations
@@ -138,7 +160,6 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
         for(const location of sortedAfterChance) {
             if(counterMaxSix == 6) break;
             if(location.isEvent) continue;
-            if(relics.vaulted == "Yes") continue;
             primeEmbed.addField(location.planet + " - " + location.node,
                     "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`,
                     true)
@@ -171,61 +192,52 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
     //Return sorted drops
     return dropLocations;
 }
-
-
-
-
-
-    async function makeEmbedForNonPrime(itemName, dropLocations, dropTableLastUpdated) {
-        let buttonComponents = {
-            type: 1,
-            components: [
-                {
-                    type: 2,
-                    label: "Previous page",
-                    style: 1,
-                    custom_id: "item_back_drops",
-                    disabled: true
-                },
-                {
-                    type: 2,
-                    label: "Next page",
-                    style: 1,
-                    custom_id: "item_next_drops",
-                    disabled: false
-                }
-            ]
-        }
-
-
-        const nonPrimeEmbed = {
-            color: 0x0099ff,
-            title: await helperMethods.data.makeCapitalFirstLettersFromString(itemName),
-            thumbnail: {
-                url: await getImageUrlNonPrime(itemName),
+/**
+ * Creates the interaction for non prime item
+ * @param {String} itemName The item name
+ * @param {Array|String} dropLocations The drop locations
+ * @param {Number} dropTableLastUpdated When drop tables was last updated
+ * @returns {Object} Interaction data 
+ */
+function makeEmbedForNonPrime(itemName, dropLocations, dropTableLastUpdated,) {
+    let buttonComponents = {
+        type: 1,
+        components: [
+            {
+                type: 2,
+                label: "Previous page",
+                style: 1,
+                custom_id: "item_back_drops",
+                disabled: true
             },
-            fields: [{
-                name: `\u200B`,
-                value: `**Top 12 drop locations**`,
-                inline: false,
-            }],
-            timestamp: dropTableLastUpdated.modified,
-                footer: {
-                    text: 'Drop tables updated:  '
-                },
-        };
-        let counter = 0;
-        for(location of dropLocations) {
-            if(counter == 12) {
-                break;
+            {
+                type: 2,
+                label: "Next page",
+                style: 1,
+                custom_id: "item_next_drops",
+                disabled: false
             }
-            if(location.gameMode == "Purchasable") {
-                nonPrimeEmbed.fields.push({name: `Shop - ${location.node}`, value: "Type: " + location.gameMode, inline: true,});
-            } else {
-                nonPrimeEmbed.fields.push({name: (location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), value: "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${(location.blueprintDropChance/100*location.chance).toFixed(3)}%` : `Chance: ${location.chance.toFixed(3)}%`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, inline: true,});
-            }
-            
-            counter++;
-        }
-        return nonPrimeEmbed;
+        ]
     }
+
+    //Create base embed
+    let embed = new Discord.MessageEmbed()
+        .setColor(0x0099ff)
+        .setTitle(helperMethods.data.makeCapitalFirstLettersFromString(itemName))
+        .setTimestamp(dropTableLastUpdated)
+        .setFooter('Drop tables updated: ')
+    
+    console.log(dropLocations);
+    let counter = 0;
+    for(const location of dropLocations) {
+        if(counter == 12) break;
+
+        if(location.gameMode == "Purchasable") {
+            embed.addField(`Shop - ${location.node}`, "Type: " + location.gameMode, true)
+        } else {
+            embed.addField((location.node !== null ? `${location.planet} - ${location.node}` : `${location.planet}`), "Type: " + location.gameMode + '\n' + (location.rotation !== null ? `Rotation: ${location.rotation} \n` : "") + (location.blueprintDropChance !== null ? `Chance: ${(location.blueprintDropChance/100*location.chance).toFixed(3)}%` : `Chance: ${location.chance.toFixed(3)}%`) + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.blueprintDropChance !== null ? location.blueprintDropChance/100*location.chance : location.chance))}`, true)
+        }
+        counter++;
+    }
+    return {content: undefined, embeds: [embed], components: [buttonComponents]}
+}
