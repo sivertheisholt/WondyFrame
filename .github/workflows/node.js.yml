@@ -19,6 +19,6 @@ jobs:
         docker login -u  $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PW
         echo 'Running build'
         docker build . -f ./docker-action/dockerfile -t wondyframe
-        docker tag wondyframe wondercrack/wondyframe
+        docker tag wondyframe wondyr/wondyframe
         echo 'Pushing image'
-        docker push wondercrack/wondyframe
+        docker push wondyr/wondyframe
