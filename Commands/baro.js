@@ -37,13 +37,14 @@ exports.run = async (args1, args2, args3, warframeDropLocations, itemKeyWords) =
                     counter++;
                 }
             }
+            return [baroEmbed1, baroEmbed2];
         } else {
             baroEmbed1.fields.push({name: "Location", value: worldState.location, inline: false,});
             baroEmbed1.fields.push({name: "Baro will arrive in", value: worldState.startString, inline: false,});
             baroEmbed1.timestamp = worldStateTimestamp;
             baroEmbed1.footer = {text: 'World state updated:'};
+            return [baroEmbed1];
         }
-        return [baroEmbed1, baroEmbed2];
     }
     
     async function postResult() {
