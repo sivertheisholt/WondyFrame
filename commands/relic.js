@@ -127,7 +127,7 @@ function makeEmbed(relicInfo, dropLocations, dropTableLastUpdated, commandData) 
         for (const reward of relicInfo.rewards[commandData.refinement]) {
             relicEmbed.addField(reward.itemName,`Rarity: ${reward.rarity}\nchance: ${(reward.chance).toFixed(2)} %`, true);
         }
-        return {content: undefined, embeds: [relicEmbed], components: [buttonComponents]}
+        return {content: undefined, embeds: [relicEmbed]}
     }
 
     //Relic content
