@@ -58,6 +58,8 @@ let buttonComponents = {
     buttonComponents.components[0].disabled = false;
     buttonComponents.components[1].disabled = false;
 
+
+
     //Check for prime or nonprime
     if(interactionNew.message.embeds[0].title.value.toLowerCase().search("prime") !== -1) {
         //Prime here
@@ -65,6 +67,7 @@ let buttonComponents = {
     } else {
         nonPrimeInteraction();
     }
+
 
 
 
@@ -89,6 +92,46 @@ let buttonComponents = {
             
     //Run correct event
     switch(interactionNew.data.custom_id) {
+        case 'item_next_drops':
+            //Make next button disabled if next interaction is on last page
+            if(parseInt(pageNumbers[0]) + 1 === parseInt(pageNumbers[1])) {
+                buttonComponents.components[1].disabled = true;
+            }
+            let dataNext = buttonNext(baroEmbed, ws.voidTrader, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
+            discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataNext);
+            break;
+        case 'item_back_drops':
+            //Make back button disabled if next interaction is on first page
+            if(parseInt(pageNumbers[0]) - 1 === 1) {
+                buttonComponents.components[0].disabled = true;
+            }
+            let dataBack = buttonBack(baroEmbed, ws.voidTrader, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
+            discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataBack);
+            break;
+        case 'item_next_relic':
+
+        case 'item_back_relic':
+        default:
+            logger.error('Could not identify interaction button - baroInteraction.js');
+            break;
+    }
+}
+
+
+
+function primeInteraction() {
+    //Get page number for relic [0] is current, [1] is total
+    let pageNumbers = interactionNew.message.embeds[0].fields[3].value.match(/\d+/g)
+    logger.debug('Page number created');
+}
+function nonPrimeInteraction() {
+
+}
+
+
+function routeEvent() {
+    //Run correct event
+    switch(interactionNew.data.custom_id) {
         case 'click_next':
             //Make next button disabled if next interaction is on last page
             if(parseInt(pageNumbers[0]) + 1 === parseInt(pageNumbers[1])) {
@@ -105,30 +148,22 @@ let buttonComponents = {
             let dataBack = buttonBack(baroEmbed, ws.voidTrader, parseInt(pageNumbers[0]), parseInt(pageNumbers[1]));
             discordApi.edit_original_interaction(interactionNew.application_id, interactionOld.token, dataBack);
             break;
+        case 'item_next_relic':
+        
+        case 'item_back_relic':
         default:
             logger.error('Could not identify interaction button - baroInteraction.js');
             break;
     }
 }
 
-
-function primeInteraction() {
-    //Get page number for relic [0] is current, [1] is total
-    let pageNumbers = interactionNew.message.embeds[0].fields[3].value.match(/\d+/g)
-    logger.debug('Page number created');
-}
-function nonPrimeInteraction() {
+function buttonNextRelic() {
 
 }
 
+function buttonLastRelic() {
 
-
-
-
-
-
-
-
+}
 
 /**
  * Handles the PATCH request and data for the "next" interaction
@@ -182,4 +217,12 @@ function getLast(embed, inventory) {
     for(const item of newInventory) {
         embed.addField(item.item, `Ducats: ${item.ducats} \n Credits: ${(helperMethods.data.makeNumberWithCommas(item.credits))}`, true);
     }
+}
+
+/**
+ * This function removes drop locations from embed
+ * @param {Object} embed Discord embed
+ */
+ function removeDropFields(embed) {
+    embed.fields = embed.fields.slice(0,7)
 }

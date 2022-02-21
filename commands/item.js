@@ -24,6 +24,7 @@ const logger = require('../logging/logger');
  */
 async function makeResult(commandData) {
     try {
+
         //Get drop table update time
         const dropTableLastUpdated = await warframe.data.getBuildInfo();
 
@@ -60,6 +61,7 @@ async function makeResult(commandData) {
  * @returns {Object} Interaction data
  */
 function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdated, showVaulted) {
+    showVaulted = showVaulted != undefined ? showVaulted : false
     let isVaulted = true;
     let relicsToUse = [];
     let currentRelic;
@@ -79,29 +81,37 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
                 style: 1,
                 custom_id: "item_next_drops",
                 disabled: false
-            },
-            {
-                type: 2,
-                label: "Previous relic",
-                style: 1,
-                custom_id: "item_back_relic",
-                disabled: true
-            },
-            {
-                type: 2,
-                label: "Next relic",
-                style: 1,
-                custom_id: "item_next_relic",
-                disabled: false
             }
+        ]
+    }
+    let selectMenuComponents = {
+        type: 1, 
+        components: [
+            {
+                type: 3,
+                custom_id: "relic_menu",
+                options:[
+                    {
+                        label: "Rogue",
+                        value: "rogue",
+                        description: "Sneak n stab",
+                    },
+                    {
+                        label: "test",
+                        value: "test2",
+                        description: "blabla",
+                    },
+                ],
+                placeholder: "",
+                min_values: 1,
+                max_values: 2
+            },
         ]
     }
 
     //Check if vaulted - check for drop locations
     for(let relic of relics) {
-        if(relic.state != "Intact") {
-            continue;
-        }
+        if(relic.state != "Intact") continue;
         if(dropLocations.get(`${(relic.tier).toLowerCase()} ${(relic.relicName).toLowerCase()} relic`) !== undefined) {
             relic.vaulted = "No";
             isVaulted = false;
@@ -124,16 +134,6 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
         primeEmbed.setDescription("**This item is vaulted or Digital Extreme didn't update the drop table yet.**");
     }
 
-    //Relics
-    if(!isVaulted) {
-        primeEmbed.addField('\u200B', `**Relic 1 of ${relicsToUse.length}**`, false)
-    }
-
-    //Check size
-    if(relicsToUse.length == 1) {
-        buttonComponents.components[3].disabled = true;
-    }
-    
     //Add relic to embed
     for (const relic of relicsToUse) {
         
@@ -153,20 +153,46 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
 
     //Add drop locations
     if(!isVaulted) {
+        //Add drop locations for first page
         primeEmbed.addField('\u200B', `**Drop locations - Page 1 of ${relics.length} **`, false)
         let getDropLocations = dropLocations.get(`${(currentRelic.tier).toLowerCase()} ${(currentRelic.relicName).toLowerCase()} relic`);
         let sortedAfterChance = sortByChance(getDropLocations);
         let counterMaxSix = 0;
-        for(const location of sortedAfterChance) {
-            if(counterMaxSix == 6) break;
-            if(location.isEvent) continue;
-            primeEmbed.addField(location.planet + " - " + location.node,
-                    "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`,
-                    true)
-            counterMaxSix++;
+
+        if(currentRelic.vaulted === "No") {
+             //Loop over drop locations
+            for(const location of sortedAfterChance) {
+                if(counterMaxSix == 6) break;
+                if(location.isEvent) continue;
+                primeEmbed.addField(location.planet + " - " + location.node,
+                        "Type: " + location.gameMode + '\n' + "Rotation: " + location.rotation + '\n' + "Chance: " + (location.chance).toFixed(3) + "%" + "\n" + `Expected Runs: ${helperMethods.data.getExpectedRuns((location.chance))}`,
+                        true)
+                counterMaxSix++;
+            }
+        } else {
+            primeEmbed.addField('\u200B', `**This relic is either vaulted, Digital Extreme didn't update the drop table yet or this item don't have any drop locations**`,false)
         }
     }
-    return {content: undefined, embeds: [primeEmbed], components: [buttonComponents]}
+    return {content: undefined, embeds: [primeEmbed], components: [selectMenuComponents, buttonComponents]}
+}
+
+
+/**
+ * Sort relics by vaulted
+ * @param {Array} relics 
+ * @returns {Array} Sorted array - Unvaulted first
+ */
+function sortRelicsByVaulted(relics) {
+    //Sort data
+    relics.sort((a, b) => {
+        if(a.vaulted == null) {
+            return b.vaulted - a.vaulted;
+        } else {
+            return b.vaulted - b.vaulted;
+        }
+    });
+
+    return relics;
 }
 
 /**
@@ -179,7 +205,7 @@ function createEmbedForPrime(itemName, relics, dropLocations, dropTableLastUpdat
     if(dropLocations == undefined) {
         return "Vaulted";
     } 
-
+   
     //Sort data
     dropLocations.sort((a, b) => {
         if(a.blueprintDropChance == null) {
@@ -227,7 +253,6 @@ function makeEmbedForNonPrime(itemName, dropLocations, dropTableLastUpdated,) {
         .setTimestamp(dropTableLastUpdated)
         .setFooter('Drop tables updated: ')
     
-    console.log(dropLocations);
     let counter = 0;
     for(const location of dropLocations) {
         if(counter == 12) break;
