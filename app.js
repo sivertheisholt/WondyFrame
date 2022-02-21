@@ -9,7 +9,8 @@ const commandList = require('./Storage/commands.json');
 
 const bot = new Discord.Client({
     autoReconnect: true,
-    unknownCommandResponse: false
+    unknownCommandResponse: false,
+    intents: [Discord.Intents.FLAGS.GUILD_MESSAGES]
 });
 
 const ap = AutoPoster(process.env.TOPGG_TOKEN, bot)
@@ -67,9 +68,11 @@ bot.on('message', message => {
     }
 });
 
+
 ap.on('posted', () => {
     console.log('Posted stats to Top.gg!')
 })
+
 
 async function sortData() {
     try {
