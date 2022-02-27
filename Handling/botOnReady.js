@@ -7,7 +7,7 @@ var methods = {
                 for (const reward of rewards) {
                     var name;
                     try {
-                        const name = (reward.itemName || reward.modName).toLowerCase();
+                        name = (reward.itemName || reward.modName).toLowerCase();
                     } catch (error) {
                         console.log("Skipping item with undefined name...")
                         continue;
