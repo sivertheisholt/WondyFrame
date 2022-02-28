@@ -7,7 +7,13 @@ var methods = {
             const map = new Map()
             const addRewardsArray = (planet, node, rotation, rewards, gameMode, blueprintDropChance, isEvent) => {
                 for (const reward of rewards) {
-                    const name = (reward.itemName || reward.modName).toLowerCase();
+                    var name;
+                    try {
+                        name = (reward.itemName || reward.modName).toLowerCase();
+                    } catch (error) {
+                        console.log("Skipping item with undefined name...")
+                        continue;
+                    }
                     let r = map.get(name)
                     if (!r) {
                         r = []
