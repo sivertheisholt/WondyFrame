@@ -60,11 +60,8 @@ var methods = {
 	 * @returns {Object|undefined} Item or undefined if nothing is found
 	 */
 	searchForItemInMap: function (name, dropLocations) {
-		for (const item of dropLocations.keys()) {
-			if (item == name) {
-				return item;
-			}
-		}
+		if (dropLocations.get(name) !== undefined) return droplocations.get(name);
+
 		for (const item of dropLocations.keys()) {
 			if (item.search(name) !== -1) {
 				return item;

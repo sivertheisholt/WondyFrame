@@ -47,6 +47,8 @@ async function makeResult(commandData) {
 		//Get drop table update time
 		const dropTableLastUpdated = await warframe.data.getBuildInfo();
 
+		console.log(commandData.item);
+
 		//Try to find item name
 		const tryToFindKey = await helperMethods.data.searchForItemInMap(
 			commandData.item,
@@ -82,6 +84,7 @@ async function makeResult(commandData) {
 		}
 	} catch (err) {
 		logger.error("Something went wrong creating item embed");
+		logger.error(err);
 		return err;
 	}
 }
