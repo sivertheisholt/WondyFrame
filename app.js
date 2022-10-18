@@ -25,7 +25,7 @@ const prefix = 'wf.';
 
 bot.on('ready', async () => {
     console.log(`Logged in as ${bot.user.tag}!`)
-    bot.user.setActivity('wf.help')
+    bot.user.setActivity('Warframe')
 
     for(const command of commandList) {
         bot.api.applications(bot.user.id).commands.post(command).catch(err => {});
@@ -59,15 +59,6 @@ bot.on('ready', async () => {
         sortData();
     }, 21600000)
 });
-
-bot.on('message', message => {
-    if(warframeDropInfo == undefined && warframeRelicInfo == undefined) {
-        return;
-    } else {
-        messageHandler.chatMessage(message, message.author, prefix, warframeDropInfo, warframeRelicInfo, itemKeyWords);
-    }
-});
-
 
 ap.on('posted', () => {
     console.log('Posted stats to Top.gg!')
