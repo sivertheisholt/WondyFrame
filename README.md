@@ -1,6 +1,9 @@
 [![Discord Bots](https://top.gg/api/widget/servers/762486668929531924.svg)](https://top.gg/bot/762486668929531924)\
 [![Discord Bots](https://top.gg/api/widget/upvotes/762486668929531924.svg)](https://top.gg/bot/762486668929531924)
 
+# Closed
+I have decided to shut down the bot and development. Simply because I don't have the time anymore and the code is poorly written. Feel free to use it how you want.
+
 # General infomation
 WondyFrame is a discordjs bot used for finding information about drop locations of items and world state in Warframe. It's made with the user in mind so the usability is the main priority for this bot.
 
