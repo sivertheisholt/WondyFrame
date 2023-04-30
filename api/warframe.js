@@ -1,4 +1,6 @@
-const fetch = require('node-fetch');
+"use strict";
+
+const fetch = require('node-fetch').default;
 
 var Warframe = function Warframe(token) {
     if (!(this instanceof Warframe))
