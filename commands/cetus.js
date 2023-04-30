@@ -1,53 +1,41 @@
-'use strict';
+exports.run = async (args1, args2, args3, warframeDropLocations, itemKeyWords) => {
+    const warframe = require('../Handling/warframeHandler');
+    const WorldState = require('warframe-worldstate-parser');
 
-const warframe = require('../handling/warframeHandler');
-const WorldState = require('warframe-worldstate-parser');
-const Discord = require("discord.js");
-const logger = require('../logging/logger');
-
-/**
- * Gets cetus information
- * @returns {Promise<Object>} Discord interaction data
- */
-exports.run = () => {
-    return makeResult();
-}
-
-/**
- * Gathers the required information that will be used to create the interaction data 
- * @returns {Promise<Object|String>} The interaction data that will responded to the user
- */
-async function makeResult() {
-    try {
-        //Get data
-        const worldStateData = await warframe.data.getWorldState();
-
-        //Parse data
-        const ws = new WorldState(JSON.stringify(worldStateData));
-
-        //Create interaction data
-        const makeCetusEmbed = createEmbed(ws.cetusCycle, ws.timestamp);
-        return makeCetusEmbed;
-    } catch(err) {
-        logger.error(err);
-        return 'Something unexpected happen when trying to run the command!';
+    function createEmbed(worldState, worldStateTimestamp) {
+        const cetusEmbed = {
+            color: 0x0099ff,
+            title: `Cetus`,
+            thumbnail: {
+                url: "https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/plains-of-eidolon-scene.png",
+            },
+            fields: [{
+                name: "Current state",
+                value: worldState.isDay ? "Day" : "Night",
+                inline: false,
+            },
+            {
+                name: "Time left",
+                value: worldState.timeLeft,
+                inline: false,
+            }],
+            timestamp: worldStateTimestamp,
+                footer: {
+                    text: 'World state updated:  '
+                },
+        };
+        return cetusEmbed;
     }
-}
-
-/**
- * This function creates the data using the required information
- * @param {Object} worldState The world state object
- * @param {Object} worldStateTimestamp The world state timestamp
- * @returns {Object} Interaction data
- */
-function createEmbed(worldState, worldStateTimestamp) {
-    let cetusEmbed = new Discord.MessageEmbed()
-                        .setColor(0x0099ff)
-                        .setTitle('Cetus')
-                        .setThumbnail('https://raw.githubusercontent.com/wfcd/warframe-items/development/data/img/plains-of-eidolon-scene.png')
-                        .addField('Current state', worldState.isDay ? "Day" : "Night", false)
-                        .addField('Time left', worldState.timeLeft, false)
-                        .setTimestamp(worldStateTimestamp)
-                        .setFooter('World state updated: ');
-    return {content: undefined, embeds: [cetusEmbed]}
+    
+    async function postResult() {
+        try {
+            const worldStateData = await warframe.data.getWorldState();
+            const ws = new WorldState(JSON.stringify(worldStateData));
+            const makeCetusEmbed = await createEmbed(ws.cetusCycle, ws.timestamp);
+            return makeCetusEmbed;
+        } catch(err) {
+            return err;
+        }
+    }
+    return await postResult();
 }

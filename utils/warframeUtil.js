@@ -41,6 +41,7 @@ exports.refreshData = async function () {
 		};
 
 		warframeDropInfo = await sortWarframeData.data.sortData(data);
+		console.log(apiData[1])
 		warframeRelicInfo = await sortWarframeData.data.sortDataRelicDrops(
 			apiData[1].relics
 		);

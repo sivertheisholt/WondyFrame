@@ -4,9 +4,8 @@ const dojoItems = require("../storage/customItems/shopitems.json");
 const Reward = require("../entities/reward");
 const Drop = require("../entities/drop");
 const DropLocation = require("../entities/dropLocation");
-const { node } = require("warframe-worldstate-parser/lib/translation");
 
-var methods = {
+let methods = {
 	/**
 	 *
 	 * @param {*} data
@@ -95,6 +94,7 @@ var methods = {
 				if (key == "missionRewards") {
 					for (const planetName of Object.keys(data[key])) {
 						const planet = data[key][planetName];
+						console.log(planet);
 						for (const nodeName of Object.keys(planet)) {
 							const gameMode = planet[nodeName].gameMode;
 							const isEvent = planet[nodeName].isEvent;
@@ -140,24 +140,14 @@ var methods = {
 							enemy.blueprintDropChance,
 							undefined
 						);
-
-						console.log(dropMods);
 						addRewards(dropItems);
 						addRewards(dropMods);
 					}
+					console.log("enemy blueprint done");
 					continue;
 				}
 
-				//Sortie
-				if (key == "sortieData") {
-					console.log("sortieData");
-					console.log(rewardData);
-					planet = "Sortie";
-					gameMode = "Sortie";
-					nodeName = rewardData.bountyLevel;
-					rewards = rewardData;
-					continue;
-				}
+
 
 				let planet;
 				let gameMode;
@@ -166,19 +156,33 @@ var methods = {
 				let blueprintDropChance;
 
 				for (const rewardData of data[key]) {
+					//Sortie
+					if (key == "sortieData") {
+						planet = "Sortie";
+						gameMode = "Sortie";
+						nodeName = rewardData.bountyLevel;
+						rewards = rewardData;
+						console.log("Sortie done");
+						continue;
+					}
+
 					//Bounties
+					console.log("Adding cetus");
 					if (key == "cetusData") {
 						planet = "Cetus";
 						gameMode = "Bounty";
 						nodeName = rewardData.bountyLevel;
 						rewards = rewardData.rewards;
 					}
+					console.log("Adding fortuna");
 					if (key == "fortunaData") {
 						planet = "Fortuna";
 						gameMode = "Bounty";
 						nodeName = rewardData.bountyLevel;
 						rewards = rewardData.rewards;
 					}
+
+					console.log("Adding deimos");
 					if (key == "deimosData") {
 						planet = "Deimos";
 						gameMode = "Bounty";
@@ -187,19 +191,16 @@ var methods = {
 					}
 
 					//Transient
+					console.log("Adding transient");
 					if (key == "transientData") {
-						console.log("transientData");
-						console.log(data[key]);
-
 						planet = rewardData.objectiveName;
 						gameMode = "Transient";
 						rewards = rewardData.rewards;
 					}
 
 					//EnemyMod
+					console.log("Adding enemy mod data");
 					if (key == "enemyModData") {
-						console.log("enemyModData");
-
 						planet = rewardData.enemyName;
 						gameMode = "Enemy";
 						rewards = rewardData.mods;
@@ -207,9 +208,8 @@ var methods = {
 					}
 
 					//Misc
+					console.log("Adding misc");
 					if (key == "miscData") {
-						console.log("miscData");
-
 						planet = rewardData.enemyName;
 						gameMode = "Enemy";
 						rewards = rewardData.items;
@@ -217,16 +217,14 @@ var methods = {
 					}
 
 					//Shop
+					console.log("Adding dojo");
 					if (key == "dojoItems") {
-						console.log("dojoItems");
-
 						planet = "Dojo";
 						gameMode = "Purchasable";
 						nodeName = rewardData.name;
 						rewards = rewardData.items;
 					}
-
-					var drop = new Drop(
+					let drop = new Drop(
 						planet,
 						nodeName,
 						undefined,
@@ -235,9 +233,8 @@ var methods = {
 						blueprintDropChance,
 						undefined
 					);
-
-					console.log("addingRest");
 					addRewards(drop);
+					
 				}
 			}
 
@@ -266,7 +263,7 @@ var methods = {
 			}
 		};
 
-		for (const relics of t.relics) {
+		for (const relics of t) {
 			const rewards = relics.rewards;
 			const tier = relics.tier;
 			const relicName = relics.relicName;
