@@ -1,7 +1,5 @@
 FROM node:18
 
-ENV DISCORD_TOKEN=none
-
 WORKDIR /usr/src/app
 
 COPY package*.json ./

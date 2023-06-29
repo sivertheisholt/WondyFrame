@@ -13,7 +13,7 @@ exports.initialize = async function(bot, prefix) {
 
     botReady.bot_ready(bot);
     botMessage.bot_message(bot, prefix);
-    botTopgg.bot_topgg(bot);
+    //botTopgg.bot_topgg(bot);
     botInteraction.bot_interaction(bot);
 
     return true;

@@ -69,6 +69,18 @@ var methods = {
 		}
 		return undefined;
 	},
+
+	searchForItemInRelics: function(name, relics)
+	{
+		if (relics.get(name) !== undefined) return relics.get(name);
+
+		for (const item of relics.keys()) {
+			if (item.search(name) !== -1) {
+				return item;
+			}
+		}
+		return undefined;
+	},
 	/**
 	 * Turns milliseconds to a human readable time
 	 * @param {Number} s Milliseconds

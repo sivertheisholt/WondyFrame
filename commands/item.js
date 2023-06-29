@@ -12,6 +12,7 @@ const logger = require("../logging/logger");
  * @param commandData.name The relic name
  * @param commandData.refinement The relic refinement
  * @param commandData.warframeDropLocations Array of all drop locations
+ * @param commandData.warframeRelicInfo Array of all drops from relics
  * @returns {Promise<Object|String>} Discord interaction data
  */
 exports.run = (commandData) => {
@@ -47,17 +48,18 @@ async function makeResult(commandData) {
 		//Get drop table update time
 		const dropTableLastUpdated = await warframe.data.getBuildInfo();
 
-		console.log(commandData.item);
-
 		//Try to find item name
-		const tryToFindKey = await helperMethods.data.searchForItemInMap(
+		let tryToFindKey = await helperMethods.data.searchForItemInMap(
 			commandData.item,
 			commandData.warframeDropLocations
 		);
 
 		//Check if drop location is found
 		if (tryToFindKey == undefined) {
-			throw `Sorry I can't find any drop locations for: ${commandData.item}`;
+			tryToFindKey = await helperMethods.data.searchForItemInRelics(
+				commandData.item,
+				commandData.warframeRelicInfo)
+				if(tryToFindKey == undefined) throw `Sorry I can't find any drop locations for: ${commandData.item}`;
 		}
 
 		//Check if item search is prime or not
@@ -246,9 +248,9 @@ function createEmbedForPrime(
 		}
 	}
 	return {
-		content: undefined,
+		content: "hello",
 		embeds: [primeEmbed],
-		components: [isVaulted ? null : selectMenuComponents, buttonComponents],
+		components: [isVaulted ?? selectMenuComponents, buttonComponents],
 	};
 }
 

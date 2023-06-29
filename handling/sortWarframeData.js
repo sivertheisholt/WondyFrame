@@ -1,7 +1,5 @@
 "use strict";
 
-const dojoItems = require("../storage/customItems/shopitems.json");
-const Reward = require("../entities/reward");
 const Drop = require("../entities/drop");
 const DropLocation = require("../entities/dropLocation");
 
@@ -65,36 +63,11 @@ let methods = {
 				}
 			}
 
-			/*
-            
-            const addRewards = (planetName, nodeName, rewards, gameMode, isEvent) => {
-                if (Array.isArray(rewards)) {
-                    addRewardsArray(planetName, nodeName, null, rewards, gameMode, null, isEvent)
-                } else {
-                    for (const rotation of Object.keys(rewards)) {
-                        addRewardsArray(planetName, nodeName, rotation, rewards[rotation], gameMode, null, isEvent)
-                    }
-                }
-            }
-
-            const addRewardsShop = (name, rewards) => {
-                if (Array.isArray(rewards)) {
-                    addRewardsArray("Dojo", name, null, rewards, "Purchasable", null);
-                } else {
-                    for (const rotation of Object.keys(rewards)) {
-                        addRewardsArray("Dojo", name, null, rewards, "Purchasable", null);
-                    }
-                }
-            }
-
-            */
-
 			for (const key of Object.keys(data)) {
 				//Missionrewards
 				if (key == "missionRewards") {
 					for (const planetName of Object.keys(data[key])) {
 						const planet = data[key][planetName];
-						console.log(planet);
 						for (const nodeName of Object.keys(planet)) {
 							const gameMode = planet[nodeName].gameMode;
 							const isEvent = planet[nodeName].isEvent;
@@ -143,11 +116,9 @@ let methods = {
 						addRewards(dropItems);
 						addRewards(dropMods);
 					}
-					console.log("enemy blueprint done");
+					console.log("Enemy blueprints done");
 					continue;
 				}
-
-
 
 				let planet;
 				let gameMode;
@@ -162,19 +133,17 @@ let methods = {
 						gameMode = "Sortie";
 						nodeName = rewardData.bountyLevel;
 						rewards = rewardData;
-						console.log("Sortie done");
 						continue;
 					}
 
 					//Bounties
-					console.log("Adding cetus");
 					if (key == "cetusData") {
 						planet = "Cetus";
 						gameMode = "Bounty";
 						nodeName = rewardData.bountyLevel;
 						rewards = rewardData.rewards;
 					}
-					console.log("Adding fortuna");
+
 					if (key == "fortunaData") {
 						planet = "Fortuna";
 						gameMode = "Bounty";
@@ -182,7 +151,6 @@ let methods = {
 						rewards = rewardData.rewards;
 					}
 
-					console.log("Adding deimos");
 					if (key == "deimosData") {
 						planet = "Deimos";
 						gameMode = "Bounty";
@@ -191,7 +159,6 @@ let methods = {
 					}
 
 					//Transient
-					console.log("Adding transient");
 					if (key == "transientData") {
 						planet = rewardData.objectiveName;
 						gameMode = "Transient";
@@ -199,7 +166,6 @@ let methods = {
 					}
 
 					//EnemyMod
-					console.log("Adding enemy mod data");
 					if (key == "enemyModData") {
 						planet = rewardData.enemyName;
 						gameMode = "Enemy";
@@ -208,7 +174,6 @@ let methods = {
 					}
 
 					//Misc
-					console.log("Adding misc");
 					if (key == "miscData") {
 						planet = rewardData.enemyName;
 						gameMode = "Enemy";
@@ -217,13 +182,13 @@ let methods = {
 					}
 
 					//Shop
-					console.log("Adding dojo");
 					if (key == "dojoItems") {
 						planet = "Dojo";
 						gameMode = "Purchasable";
 						nodeName = rewardData.name;
 						rewards = rewardData.items;
 					}
+
 					let drop = new Drop(
 						planet,
 						nodeName,
@@ -234,7 +199,6 @@ let methods = {
 						undefined
 					);
 					addRewards(drop);
-					
 				}
 			}
 
@@ -250,6 +214,7 @@ let methods = {
 				let r = map.get(reward.itemName.toLowerCase());
 				if (!r) {
 					r = [];
+					console.log(reward.itemName.toLowerCase())
 					map.set(reward.itemName.toLowerCase(), r);
 				}
 				r.push({
