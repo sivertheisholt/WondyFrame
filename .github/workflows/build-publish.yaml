@@ -1,0 +1,24 @@
+name: Build, publish and release
+
+on:
+  push: 
+    branches: 
+      - main
+      - prod
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-publish:
+    uses: ./.github/workflows/.build-publish-docker.yaml
+    secrets: inherit
+
+  create-release: 
+    if: github.ref == 'refs/heads/prod'
+    uses: ./.github/workflows/.create-release.yaml
+    needs: build-publish
+    secrets: inherit
