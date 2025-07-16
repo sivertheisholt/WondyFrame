@@ -8,6 +8,7 @@ use serenity::all::{
 use std::str::FromStr;
 
 use crate::api::warframe_client;
+use crate::enums::difficulty::Difficulty;
 use crate::enums::thumbnail::Thumbnail;
 use crate::models::fissure::{Fissure, Tier};
 use crate::types::context::Context;
@@ -15,16 +16,12 @@ use crate::types::error::Error;
 use crate::utils::date::format_timestamp;
 
 #[poise::command(slash_command)]
-pub async fn fissures(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn fissures(
+    ctx: Context<'_>,
+    #[description = "Mission difficulty"] difficulty: Difficulty,
+) -> Result<(), Error> {
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
-    let fissures: Result<Vec<Fissure>, reqwest::Error> =
-        warframe_client.fetch::<Vec<Fissure>>("fissures").await;
-    if fissures.is_err() {
-        println!("Error fetching fissures: {:?}", fissures.err());
-        return Ok(());
-    }
-
-    let fissures = fissures.unwrap();
+    let fissures: Vec<Fissure> = warframe_client.fetch::<Vec<Fissure>>("fissures").await?;
 
     let ctx_id: u64 = ctx.id();
     let relics_dropdown: String = format!("{}relics_dropdown", ctx_id);
@@ -37,9 +34,9 @@ pub async fn fissures(ctx: Context<'_>) -> Result<(), Error> {
         .collect();
     fissure_types.sort_by_key(|tier| tier.clone() as u8);
 
-    let embed: CreateEmbed = create_fissure_embed(fissures.clone(), Tier::Lith).await;
+    let embed: CreateEmbed = create_fissures_embed(&fissures, &Tier::Lith, &difficulty);
     let components: Vec<CreateActionRow> =
-        create_components(fissure_types.clone(), Tier::Lith, relics_dropdown.clone()).await;
+        create_components(&fissure_types, &Tier::Lith, &relics_dropdown);
 
     let reply: CreateReply = CreateReply::default().components(components).embed(embed);
 
@@ -65,10 +62,11 @@ pub async fn fissures(ctx: Context<'_>) -> Result<(), Error> {
                 handle_dropdown_interaction(
                     ctx,
                     press,
-                    fissures.clone(),
-                    selected_tier.clone(),
-                    fissure_types.clone(),
-                    relics_dropdown.clone(),
+                    &fissures,
+                    &selected_tier,
+                    &fissure_types,
+                    &relics_dropdown,
+                    &difficulty,
                 )
                 .await?
             }
@@ -79,17 +77,17 @@ pub async fn fissures(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-async fn create_components(
-    fissure_types: Vec<Tier>,
-    selected_tier: Tier,
-    relics_dropdown: String,
+fn create_components(
+    fissure_types: &Vec<Tier>,
+    selected_tier: &Tier,
+    relics_dropdown: &str,
 ) -> Vec<CreateActionRow> {
     let options: Vec<CreateSelectMenuOption> = fissure_types
         .iter()
         .map(|fissure_type| {
             let mut option =
                 CreateSelectMenuOption::new(fissure_type.to_string(), fissure_type.to_string());
-            if *fissure_type == selected_tier {
+            if *fissure_type == *selected_tier {
                 option = option.default_selection(true);
             }
             option
@@ -102,15 +100,27 @@ async fn create_components(
     return vec![CreateActionRow::SelectMenu(select_menu)];
 }
 
-async fn create_fissure_embed(fissures: Vec<Fissure>, tier: Tier) -> CreateEmbed {
+fn create_fissures_embed(
+    fissures: &Vec<Fissure>,
+    tier: &Tier,
+    difficulty: &Difficulty,
+) -> CreateEmbed {
     let filtered_fissures: Vec<Fissure> = fissures
         .iter()
-        .filter(|fissure| fissure.tier == tier)
+        .filter(|fissure| {
+            fissure.tier == *tier
+                && fissure.is_hard
+                    == match difficulty {
+                        Difficulty::Normal => false,
+                        Difficulty::SP => true,
+                    }
+        })
         .cloned()
         .collect();
 
     return CreateEmbed::new()
-        .title("Fissurs")
+        .title(format!("{} Fissures", tier))
+        .url("https://wiki.warframe.com/w/Void_Fissure")
         .color(0x0099ff)
         .thumbnail(Thumbnail::Fissure.url())
         .fields(
@@ -137,15 +147,16 @@ async fn create_fissure_embed(fissures: Vec<Fissure>, tier: Tier) -> CreateEmbed
 async fn handle_dropdown_interaction(
     ctx: Context<'_>,
     interaction: ComponentInteraction,
-    fissures: Vec<Fissure>,
-    selected_tier: Tier,
-    fissure_types: Vec<Tier>,
-    relics_dropdown: String,
+    fissures: &Vec<Fissure>,
+    selected_tier: &Tier,
+    fissure_types: &Vec<Tier>,
+    relics_dropdown: &str,
+    difficulty: &Difficulty,
 ) -> Result<(), Error> {
-    let embed: CreateEmbed = create_fissure_embed(fissures.clone(), selected_tier.clone()).await;
+    let embed: CreateEmbed = create_fissures_embed(fissures, selected_tier, difficulty);
 
     let components: Vec<CreateActionRow> =
-        create_components(fissure_types, selected_tier, relics_dropdown).await;
+        create_components(fissure_types, selected_tier, relics_dropdown);
 
     interaction
         .create_response(

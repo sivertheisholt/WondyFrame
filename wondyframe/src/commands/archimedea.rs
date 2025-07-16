@@ -1,7 +1,8 @@
 use poise::CreateReply;
 use serenity::all::{
-    ComponentInteraction, ComponentInteractionCollector, CreateActionRow, CreateButton,
-    CreateEmbed, CreateEmbedFooter, CreateInteractionResponse, CreateInteractionResponseMessage,
+    ButtonStyle, ComponentInteraction, ComponentInteractionCollector, CreateActionRow,
+    CreateButton, CreateEmbed, CreateEmbedFooter, CreateInteractionResponse,
+    CreateInteractionResponseMessage,
 };
 
 use crate::api::warframe_client;
@@ -22,20 +23,13 @@ pub async fn archimedea(
         ArchimedeaType::Deep => "deepArchimedea",
         ArchimedeaType::Temporal => "temporalArchimedea",
     };
-    let archimedea: Result<Archimedea, reqwest::Error> =
-        warframe_client.fetch::<Archimedea>(endpoint).await;
-    if archimedea.is_err() {
-        println!("Error fetching archimedea: {:?}", archimedea.err());
-        return Ok(());
-    }
-
-    let archimedea = archimedea.unwrap();
+    let archimedea: Archimedea = warframe_client.fetch::<Archimedea>(endpoint).await?;
 
     let ctx_id: u64 = ctx.id();
     let modifiers_button: String = format!("{}modifiers", ctx_id);
     let archimedea_button: String = format!("{}archimedea", ctx_id);
 
-    let embed: CreateEmbed = create_archimedea_embed(archimedea.clone(), r#type.clone()).await;
+    let embed: CreateEmbed = create_archimedea_embed(&archimedea, &r#type);
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(&modifiers_button)
@@ -56,24 +50,12 @@ pub async fn archimedea(
     {
         match &press.data.custom_id {
             x if x == &modifiers_button => {
-                handle_modifiers_interaction(
-                    ctx,
-                    press,
-                    archimedea.clone(),
-                    &archimedea_button,
-                    r#type.clone(),
-                )
-                .await?
+                handle_modifiers_interaction(ctx, press, &archimedea, &archimedea_button, &r#type)
+                    .await?
             }
             x if x == &archimedea_button => {
-                handle_archimedea_interaction(
-                    ctx,
-                    press,
-                    archimedea.clone(),
-                    &modifiers_button,
-                    r#type.clone(),
-                )
-                .await?
+                handle_archimedea_interaction(ctx, press, &archimedea, &modifiers_button, &r#type)
+                    .await?
             }
             _ => {}
         }
@@ -82,7 +64,7 @@ pub async fn archimedea(
     Ok(())
 }
 
-async fn create_modifiers_embed(archimedea: Archimedea, r#type: ArchimedeaType) -> CreateEmbed {
+fn create_modifiers_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> CreateEmbed {
     return CreateEmbed::new()
         .title("Modifiers")
         .color(0x0099ff)
@@ -130,7 +112,7 @@ async fn create_modifiers_embed(archimedea: Archimedea, r#type: ArchimedeaType) 
         )));
 }
 
-async fn create_archimedea_embed(archimedea: Archimedea, r#type: ArchimedeaType) -> CreateEmbed {
+fn create_archimedea_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> CreateEmbed {
     return CreateEmbed::new()
         .title(match r#type {
             ArchimedeaType::Deep => "Deep Archimedea",
@@ -186,16 +168,16 @@ async fn create_archimedea_embed(archimedea: Archimedea, r#type: ArchimedeaType)
 async fn handle_archimedea_interaction(
     ctx: Context<'_>,
     interaction: ComponentInteraction,
-    archimedea: Archimedea,
-    modifiers_button: &String,
-    r#type: ArchimedeaType,
+    archimedea: &Archimedea,
+    modifiers_button: &str,
+    r#type: &ArchimedeaType,
 ) -> Result<(), Error> {
-    let embed: CreateEmbed = create_archimedea_embed(archimedea, r#type).await;
+    let embed: CreateEmbed = create_archimedea_embed(archimedea, r#type);
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(modifiers_button)
             .label("Modifiers")
-            .style(poise::serenity_prelude::ButtonStyle::Primary),
+            .style(ButtonStyle::Primary),
     ])];
 
     interaction
@@ -215,16 +197,16 @@ async fn handle_archimedea_interaction(
 async fn handle_modifiers_interaction(
     ctx: Context<'_>,
     interaction: ComponentInteraction,
-    archimedea: Archimedea,
-    archimedea_button: &String,
-    r#type: ArchimedeaType,
+    archimedea: &Archimedea,
+    archimedea_button: &str,
+    r#type: &ArchimedeaType,
 ) -> Result<(), Error> {
-    let embed: CreateEmbed = create_modifiers_embed(archimedea, r#type).await;
+    let embed: CreateEmbed = create_modifiers_embed(archimedea, r#type);
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(archimedea_button)
             .label("Archimedea")
-            .style(poise::serenity_prelude::ButtonStyle::Primary),
+            .style(ButtonStyle::Primary),
     ])];
 
     interaction
