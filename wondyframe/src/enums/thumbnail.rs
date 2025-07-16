@@ -3,7 +3,8 @@ pub enum Thumbnail {
     Fortuna,
     Deimos,
     Fissure,
-    Archimedea,
+    DeepArchimedea,
+    TemporalArchimedea,
 }
 
 impl Thumbnail {
@@ -16,12 +17,11 @@ impl Thumbnail {
             Thumbnail::Deimos => {
                 "https://wiki.warframe.com/images/thumb/CambionDrift.jpg/1024px-CambionDrift.jpg?f2516"
             }
-            Thumbnail::Fissure => {
-                "https://wiki.warframe.com/images/thumb/Fissure.png/1024px-Fissure.png?00000"
-            }
-            Thumbnail::Archimedea => {
+            Thumbnail::Fissure => "https://wiki.warframe.com/images/VoidTraces.png?fbc05",
+            Thumbnail::DeepArchimedea => {
                 "https://static.wikia.nocookie.net/warframe/images/b/b7/MurmurIcon.png/revision/latest?cb=20240326045206"
             }
+            Thumbnail::TemporalArchimedea => "https://wiki.warframe.com/images/HexIcon.png?c8c7d",
         }
     }
 }

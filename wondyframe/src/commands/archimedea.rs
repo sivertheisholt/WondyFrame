@@ -3,23 +3,39 @@ use serenity::all::{
     ComponentInteraction, ComponentInteractionCollector, CreateActionRow, CreateButton,
     CreateEmbed, CreateEmbedFooter, CreateInteractionResponse, CreateInteractionResponseMessage,
 };
-use warframe::worldstate::queryable::DeepArchimedea;
 
+use crate::api::warframe_client;
+use crate::enums::archimedea_type::ArchimedeaType;
 use crate::enums::thumbnail::Thumbnail;
+use crate::models::archimedea::Archimedea;
 use crate::types::context::Context;
 use crate::types::error::Error;
 use crate::utils::date::format_timestamp;
 
 #[poise::command(slash_command)]
-pub async fn archimedea(ctx: Context<'_>) -> Result<(), Error> {
-    let client: &warframe::worldstate::Client = &ctx.data().client;
-    let deep_archimedea: DeepArchimedea = client.fetch::<DeepArchimedea>().await?;
+pub async fn archimedea(
+    ctx: Context<'_>,
+    #[description = "Deep or Temporal"] r#type: ArchimedeaType,
+) -> Result<(), Error> {
+    let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
+    let endpoint = match r#type {
+        ArchimedeaType::Deep => "deepArchimedea",
+        ArchimedeaType::Temporal => "temporalArchimedea",
+    };
+    let archimedea: Result<Archimedea, reqwest::Error> =
+        warframe_client.fetch::<Archimedea>(endpoint).await;
+    if archimedea.is_err() {
+        println!("Error fetching archimedea: {:?}", archimedea.err());
+        return Ok(());
+    }
+
+    let archimedea = archimedea.unwrap();
 
     let ctx_id: u64 = ctx.id();
     let modifiers_button: String = format!("{}modifiers", ctx_id);
     let archimedea_button: String = format!("{}archimedea", ctx_id);
 
-    let embed: CreateEmbed = create_archimedea_embed(deep_archimedea.clone()).await;
+    let embed: CreateEmbed = create_archimedea_embed(archimedea.clone(), r#type.clone()).await;
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(&modifiers_button)
@@ -43,8 +59,9 @@ pub async fn archimedea(ctx: Context<'_>) -> Result<(), Error> {
                 handle_modifiers_interaction(
                     ctx,
                     press,
-                    deep_archimedea.clone(),
+                    archimedea.clone(),
                     &archimedea_button,
+                    r#type.clone(),
                 )
                 .await?
             }
@@ -52,8 +69,9 @@ pub async fn archimedea(ctx: Context<'_>) -> Result<(), Error> {
                 handle_archimedea_interaction(
                     ctx,
                     press,
-                    deep_archimedea.clone(),
+                    archimedea.clone(),
                     &modifiers_button,
+                    r#type.clone(),
                 )
                 .await?
             }
@@ -64,13 +82,16 @@ pub async fn archimedea(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-async fn create_modifiers_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed {
+async fn create_modifiers_embed(archimedea: Archimedea, r#type: ArchimedeaType) -> CreateEmbed {
     return CreateEmbed::new()
         .title("Modifiers")
         .color(0x0099ff)
-        .thumbnail(Thumbnail::Archimedea.url())
+        .thumbnail(match r#type {
+            ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
+            ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),
+        })
         .fields(
-            deep_archimedea
+            archimedea
                 .missions
                 .iter()
                 .map(|mission| {
@@ -83,7 +104,7 @@ async fn create_modifiers_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed 
                 .collect::<Vec<_>>(),
         )
         .fields(
-            deep_archimedea
+            archimedea
                 .missions
                 .iter()
                 .flat_map(|mission| &mission.risk_variables)
@@ -91,7 +112,7 @@ async fn create_modifiers_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed 
                 .collect::<Vec<_>>(),
         )
         .fields(
-            deep_archimedea
+            archimedea
                 .personal_modifiers
                 .iter()
                 .map(|modifier| {
@@ -109,13 +130,19 @@ async fn create_modifiers_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed 
         )));
 }
 
-async fn create_archimedea_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed {
+async fn create_archimedea_embed(archimedea: Archimedea, r#type: ArchimedeaType) -> CreateEmbed {
     return CreateEmbed::new()
-        .title("Deep Archimedea")
+        .title(match r#type {
+            ArchimedeaType::Deep => "Deep Archimedea",
+            ArchimedeaType::Temporal => "Temporal Archimedea",
+        })
         .color(0x0099ff)
-        .thumbnail(Thumbnail::Archimedea.url())
+        .thumbnail(match r#type {
+            ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
+            ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),
+        })
         .fields(
-            deep_archimedea
+            archimedea
                 .missions
                 .iter()
                 .enumerate()
@@ -124,7 +151,7 @@ async fn create_archimedea_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed
                     let emoji = emojis.get(i).unwrap_or(&":grey_question:");
 
                     (
-                        format!("{} {}", emoji, mission.r#type.to_string()),
+                        format!("{} {}", emoji, mission.mission.to_string()),
                         format!(
                             "**Deviation:** {} \n **Risks:** {}",
                             mission.deviation.name,
@@ -142,7 +169,7 @@ async fn create_archimedea_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed
         )
         .field(
             ":grey_exclamation: Personal modifiers",
-            deep_archimedea
+            archimedea
                 .personal_modifiers
                 .iter()
                 .map(|modifier| modifier.name.to_string())
@@ -159,10 +186,11 @@ async fn create_archimedea_embed(deep_archimedea: DeepArchimedea) -> CreateEmbed
 async fn handle_archimedea_interaction(
     ctx: Context<'_>,
     interaction: ComponentInteraction,
-    deep_archimedea: DeepArchimedea,
+    archimedea: Archimedea,
     modifiers_button: &String,
+    r#type: ArchimedeaType,
 ) -> Result<(), Error> {
-    let embed: CreateEmbed = create_archimedea_embed(deep_archimedea).await;
+    let embed: CreateEmbed = create_archimedea_embed(archimedea, r#type).await;
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(modifiers_button)
@@ -187,10 +215,11 @@ async fn handle_archimedea_interaction(
 async fn handle_modifiers_interaction(
     ctx: Context<'_>,
     interaction: ComponentInteraction,
-    deep_archimedea: DeepArchimedea,
+    archimedea: Archimedea,
     archimedea_button: &String,
+    r#type: ArchimedeaType,
 ) -> Result<(), Error> {
-    let embed: CreateEmbed = create_modifiers_embed(deep_archimedea).await;
+    let embed: CreateEmbed = create_modifiers_embed(archimedea, r#type).await;
 
     let components: Vec<CreateActionRow> = vec![CreateActionRow::Buttons(vec![
         CreateButton::new(archimedea_button)

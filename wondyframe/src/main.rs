@@ -1,5 +1,8 @@
 use crate::{
-    commands::{archimedea::archimedea, cetus::cetus, deimos::deimos, fortuna::fortuna},
+    api::warframe_client::WarframeClient,
+    commands::{
+        archimedea::archimedea, cetus::cetus, deimos::deimos, fissures::fissures, fortuna::fortuna,
+    },
     models::data::Data,
 };
 use ::serenity::all::{ClientBuilder, GatewayIntents, GuildId};
@@ -12,6 +15,7 @@ use warframe::worldstate::Client;
 
 use dotenv::{dotenv, var};
 
+mod api;
 mod commands;
 mod enums;
 mod models;
@@ -30,7 +34,7 @@ async fn main() {
 
     let framework = Framework::builder()
         .options(FrameworkOptions {
-            commands: vec![cetus(), fortuna(), deimos(), archimedea()],
+            commands: vec![cetus(), fortuna(), deimos(), archimedea(), fissures()],
 
             ..Default::default()
         })
@@ -46,6 +50,7 @@ async fn main() {
                 on_bot_ready(_ready).await;
                 Ok(Data {
                     client: Client::new(),
+                    warframe_client: WarframeClient::new("pc"),
                 })
             })
         })
