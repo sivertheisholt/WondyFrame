@@ -2,6 +2,7 @@ use crate::{
     api::warframe_client::WarframeClient,
     commands::{
         archimedea::archimedea, cetus::cetus, deimos::deimos, fissures::fissures, fortuna::fortuna,
+        nightwave::nightwave,
     },
     models::data::Data,
 };
@@ -34,7 +35,14 @@ async fn main() {
 
     let framework = Framework::builder()
         .options(FrameworkOptions {
-            commands: vec![cetus(), fortuna(), deimos(), archimedea(), fissures()],
+            commands: vec![
+                cetus(),
+                fortuna(),
+                deimos(),
+                archimedea(),
+                fissures(),
+                nightwave(),
+            ],
 
             ..Default::default()
         })

@@ -7,6 +7,7 @@ use serenity::all::{
 
 use crate::api::warframe_client;
 use crate::enums::archimedea_type::ArchimedeaType;
+use crate::enums::colors::Colors;
 use crate::enums::thumbnail::Thumbnail;
 use crate::models::archimedea::Archimedea;
 use crate::types::context::Context;
@@ -17,7 +18,9 @@ use crate::utils::date::format_timestamp;
 pub async fn archimedea(
     ctx: Context<'_>,
     #[description = "Deep or Temporal"] r#type: ArchimedeaType,
+    #[description = "Reply visible for other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let endpoint = match r#type {
         ArchimedeaType::Deep => "deepArchimedea",
@@ -37,7 +40,10 @@ pub async fn archimedea(
             .style(poise::serenity_prelude::ButtonStyle::Primary),
     ])];
 
-    let reply: CreateReply = CreateReply::default().components(components).embed(embed);
+    let reply: CreateReply = CreateReply::default()
+        .components(components)
+        .embed(embed)
+        .ephemeral(!is_public);
 
     ctx.send(reply).await?;
 
@@ -67,7 +73,7 @@ pub async fn archimedea(
 fn create_modifiers_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> CreateEmbed {
     return CreateEmbed::new()
         .title("Modifiers")
-        .color(0x0099ff)
+        .color(Colors::EmbedColor.as_u32())
         .thumbnail(match r#type {
             ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
             ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),
@@ -118,7 +124,11 @@ fn create_archimedea_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> 
             ArchimedeaType::Deep => "Deep Archimedea",
             ArchimedeaType::Temporal => "Temporal Archimedea",
         })
-        .color(0x0099ff)
+        .url(match r#type {
+            ArchimedeaType::Deep => "https://warframe.fandom.com/wiki/Deep_Archimedea",
+            ArchimedeaType::Temporal => "https://wiki.warframe.com/w/Temporal_Archimedea",
+        })
+        .color(Colors::EmbedColor.as_u32())
         .thumbnail(match r#type {
             ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
             ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),

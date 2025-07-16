@@ -5,6 +5,7 @@ pub enum Thumbnail {
     Fissure,
     DeepArchimedea,
     TemporalArchimedea,
+    Nightwave,
 }
 
 impl Thumbnail {
@@ -22,6 +23,7 @@ impl Thumbnail {
                 "https://static.wikia.nocookie.net/warframe/images/b/b7/MurmurIcon.png/revision/latest?cb=20240326045206"
             }
             Thumbnail::TemporalArchimedea => "https://wiki.warframe.com/images/HexIcon.png?c8c7d",
+            Thumbnail::Nightwave => "https://wiki.warframe.com/images/NightwaveSyndicate.png?e0486",
         }
     }
 }

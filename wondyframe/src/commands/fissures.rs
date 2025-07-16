@@ -8,6 +8,7 @@ use serenity::all::{
 use std::str::FromStr;
 
 use crate::api::warframe_client;
+use crate::enums::colors::Colors;
 use crate::enums::difficulty::Difficulty;
 use crate::enums::thumbnail::Thumbnail;
 use crate::models::fissure::{Fissure, Tier};
@@ -19,7 +20,9 @@ use crate::utils::date::format_timestamp;
 pub async fn fissures(
     ctx: Context<'_>,
     #[description = "Mission difficulty"] difficulty: Difficulty,
+    #[description = "Reply visible for other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let fissures: Vec<Fissure> = warframe_client.fetch::<Vec<Fissure>>("fissures").await?;
 
@@ -38,7 +41,10 @@ pub async fn fissures(
     let components: Vec<CreateActionRow> =
         create_components(&fissure_types, &Tier::Lith, &relics_dropdown);
 
-    let reply: CreateReply = CreateReply::default().components(components).embed(embed);
+    let reply: CreateReply = CreateReply::default()
+        .components(components)
+        .embed(embed)
+        .ephemeral(!is_public);
 
     ctx.send(reply).await?;
 
@@ -120,8 +126,8 @@ fn create_fissures_embed(
 
     return CreateEmbed::new()
         .title(format!("{} Fissures", tier))
-        .url("https://wiki.warframe.com/w/Void_Fissure")
-        .color(0x0099ff)
+        .url("https://warframe.fandom.com/wiki/Void_Fissure")
+        .color(Colors::EmbedColor.as_u32())
         .thumbnail(Thumbnail::Fissure.url())
         .fields(
             filtered_fissures

@@ -1,6 +1,8 @@
 use std::{fmt, str::FromStr};
 
-#[derive(Debug, Clone, serde::Deserialize, PartialEq, Eq, Hash)]
+use serde::Deserialize;
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Hash)]
 pub enum Tier {
     Lith = 1,
     Meso = 2,
@@ -39,7 +41,7 @@ impl FromStr for Tier {
     }
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Fissure {
     #[allow(dead_code)]
     pub id: String,
