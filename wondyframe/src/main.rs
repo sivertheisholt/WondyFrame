@@ -6,7 +6,9 @@ use crate::{
     },
     models::data::Data,
 };
-use ::serenity::all::{ClientBuilder, GatewayIntents, GuildId};
+use ::serenity::all::{ActivityData, ClientBuilder, Context, GatewayIntents, GuildId};
+use log::info;
+
 use poise::{
     Framework, FrameworkOptions,
     samples::{register_globally, register_in_guild},
@@ -23,13 +25,15 @@ mod models;
 mod types;
 mod utils;
 
-async fn on_bot_ready(ready: &serenity::Ready) {
-    println!("Bot {} is now connected and ready!", ready.user.name);
+async fn on_bot_ready(ctx: &Context, ready: &serenity::Ready) {
+    info!("Bot {} is now connected and ready!", ready.user.name);
+    ctx.set_activity(Some(ActivityData::playing("Warframe")));
 }
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    env_logger::init();
     let token = var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
     let intents = GatewayIntents::non_privileged();
 
@@ -46,7 +50,7 @@ async fn main() {
 
             ..Default::default()
         })
-        .setup(|ctx, _ready, framework| {
+        .setup(|ctx: &Context, _ready, framework| {
             Box::pin(async move {
                 if var("ENVIRONMENT").unwrap_or_default() == "prod" {
                     register_globally(ctx, &framework.options().commands).await?;
@@ -55,7 +59,7 @@ async fn main() {
                     register_in_guild(ctx, &framework.options().commands, guild_id).await?;
                 }
 
-                on_bot_ready(_ready).await;
+                on_bot_ready(ctx, _ready).await;
                 Ok(Data {
                     client: Client::new(),
                     warframe_client: WarframeClient::new("pc"),

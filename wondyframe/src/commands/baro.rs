@@ -1,3 +1,4 @@
+use log::info;
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 
@@ -10,8 +11,9 @@ use crate::utils::date::format_timestamp;
 #[poise::command(slash_command)]
 pub async fn baro(
     ctx: Context<'_>,
-    #[description = "Reply visible for other users?"] public: Option<bool>,
+    #[description = "Reply visible to other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    info!("Baro command called");
     let is_public = public.unwrap_or(false);
     //let client: &warframe::worldstate::Client = &ctx.data().client;
     //let void_trader: VoidTrader = client.fetch::<VoidTrader>().await?;

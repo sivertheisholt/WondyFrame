@@ -1,3 +1,4 @@
+use log::info;
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 
@@ -13,8 +14,9 @@ use crate::utils::date::format_timestamp;
 #[poise::command(slash_command)]
 pub async fn nightwave(
     ctx: Context<'_>,
-    #[description = "Reply visible for other users?"] public: Option<bool>,
+    #[description = "Reply visible to other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    info!("Nightwave command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let nightwave: Nightwave = warframe_client.fetch::<Nightwave>("nightwave").await?;

@@ -1,3 +1,4 @@
+use log::info;
 use poise::CreateReply;
 use serenity::all::{
     ButtonStyle, ComponentInteraction, ComponentInteractionCollector, CreateActionRow,
@@ -18,8 +19,9 @@ use crate::utils::date::format_timestamp;
 pub async fn archimedea(
     ctx: Context<'_>,
     #[description = "Deep or Temporal"] r#type: ArchimedeaType,
-    #[description = "Reply visible for other users?"] public: Option<bool>,
+    #[description = "Reply visible to other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    info!("Archimedea command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let endpoint = match r#type {

@@ -1,3 +1,4 @@
+use log::info;
 use poise::CreateReply;
 use serenity::all::{
     ComponentInteraction, ComponentInteractionCollector, ComponentInteractionDataKind,
@@ -20,8 +21,9 @@ use crate::utils::date::format_timestamp;
 pub async fn fissures(
     ctx: Context<'_>,
     #[description = "Mission difficulty"] difficulty: Difficulty,
-    #[description = "Reply visible for other users?"] public: Option<bool>,
+    #[description = "Reply visible to other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
+    info!("Fissures command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let fissures: Vec<Fissure> = warframe_client.fetch::<Vec<Fissure>>("fissures").await?;
