@@ -98,7 +98,6 @@ fn create_modifiers_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> C
                 .missions
                 .iter()
                 .flat_map(|mission| &mission.risk_variables)
-                .rev()
                 .map(|risk| (risk.name.to_string(), risk.description.to_string(), false))
                 .collect::<Vec<_>>(),
             ArchimedeaType::Temporal => archimedea
@@ -142,8 +141,35 @@ fn create_archimedea_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> 
             ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
             ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),
         })
-        .fields(
-            archimedea
+        .fields(match r#type {
+            ArchimedeaType::Deep => archimedea
+                .missions
+                .iter()
+                .enumerate()
+                .collect::<Vec<_>>()
+                .into_iter()
+                .rev()
+                .map(|(i, mission)| {
+                    let emojis = [":one:", ":two:", ":three:"];
+                    let emoji = emojis.get(2 - i).unwrap_or(&":grey_question:");
+
+                    (
+                        format!("{} {}", emoji, mission.mission.to_string()),
+                        format!(
+                            "**Deviation:** {} \n **Risks:** {}",
+                            mission.deviation.name,
+                            mission
+                                .risk_variables
+                                .iter()
+                                .map(|risk| risk.name.to_string())
+                                .collect::<Vec<String>>()
+                                .join(", "),
+                        ),
+                        false,
+                    )
+                })
+                .collect::<Vec<_>>(),
+            ArchimedeaType::Temporal => archimedea
                 .missions
                 .iter()
                 .enumerate()
@@ -167,7 +193,7 @@ fn create_archimedea_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> 
                     )
                 })
                 .collect::<Vec<_>>(),
-        )
+        })
         .field(
             ":grey_exclamation: Personal modifiers",
             archimedea
