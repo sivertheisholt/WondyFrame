@@ -6,7 +6,6 @@ use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 
 use crate::api::warframe_client;
-use crate::commands::teshin;
 use crate::enums::colors::Colors;
 use crate::enums::emojis::Emojis;
 use crate::enums::thumbnail::Thumbnail;
@@ -67,40 +66,6 @@ pub async fn teshin(
             false,
         )
         .field("Upcoming", upcoming_str, false)
-        // .fields(
-        //     teshin_offerings
-        //         .evergreen
-        //         .iter()
-        //         .map(|item| {
-        //             (
-        //                 item.name.to_string(),
-        //                 format!(
-        //                     ":white_small_square: {} <:steel_essence:{}>",
-        //                     item.cost,
-        //                     Emojis::SteelEssence.id()
-        //                 ),
-        //                 false,
-        //             )
-        //         })
-        //         .collect::<Vec<_>>(),
-        // )
-        // .field(
-        //     "Evergreen:",
-        //     teshin_offerings
-        //         .evergreen
-        //         .iter()
-        //         .map(|item| {
-        //             format!(
-        //                 ":white_small_square: {} - {} <:steel_essence:{}>",
-        //                 item.name,
-        //                 item.cost,
-        //                 Emojis::SteelEssence.id()
-        //             )
-        //         })
-        //         .collect::<Vec<_>>()
-        //         .join("\n"),
-        //     false,
-        // )
         .footer(CreateEmbedFooter::new(format!(
             "World state updated: {}",
             format_timestamp()
