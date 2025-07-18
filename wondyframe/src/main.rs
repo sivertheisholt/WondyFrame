@@ -1,8 +1,8 @@
 use crate::{
-    api::warframe_client::WarframeClient,
+    api::{warframe_client::WarframeClient, warframe_drops::WarframeDrops},
     commands::{
-        archimedea::archimedea, cetus::cetus, deimos::deimos, fissures::fissures, fortuna::fortuna,
-        nightwave::nightwave,
+        archimedea::archimedea, archon::archon, cetus::cetus, deimos::deimos, fissures::fissures,
+        fortuna::fortuna, nightwave::nightwave, teshin::teshin,
     },
     models::data::Data,
 };
@@ -46,6 +46,8 @@ async fn main() {
                 archimedea(),
                 fissures(),
                 nightwave(),
+                teshin(),
+                archon(),
             ],
 
             ..Default::default()
@@ -58,6 +60,7 @@ async fn main() {
                     let guild_id = GuildId::new(1236683291164414054);
                     register_in_guild(ctx, &framework.options().commands, guild_id).await?;
                 }
+                let warframe_drops = WarframeDrops::new();
 
                 on_bot_ready(ctx, _ready).await;
                 Ok(Data {

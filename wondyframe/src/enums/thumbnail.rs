@@ -6,6 +6,9 @@ pub enum Thumbnail {
     DeepArchimedea,
     TemporalArchimedea,
     Nightwave,
+    Archon,
+    Teshin,
+    SteelEssence,
 }
 
 impl Thumbnail {
@@ -24,6 +27,13 @@ impl Thumbnail {
             }
             Thumbnail::TemporalArchimedea => "https://wiki.warframe.com/images/HexIcon.png?c8c7d",
             Thumbnail::Nightwave => "https://wiki.warframe.com/images/NightwaveSyndicate.png?e0486",
+            Thumbnail::Archon => "https://wiki.warframe.com/images/IconNarmer.png?1337d",
+            Thumbnail::Teshin => {
+                "https://static.wikia.nocookie.net/warframe/images/7/7f/Teshin.png/revision/latest?cb=20150818043033"
+            }
+            Thumbnail::SteelEssence => {
+                "https://static.wikia.nocookie.net/warframe/images/1/10/SteelEssence.png/revision/latest?cb=20221214233649"
+            }
         }
     }
 }

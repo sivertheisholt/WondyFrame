@@ -18,7 +18,11 @@ impl WarframeClient {
     where
         T: DeserializeOwned,
     {
-        let url = format!("{}{}", self.base_url, endpoint);
+        let url = if endpoint == "steelpath" {
+            format!("https://api.warframestat.us/steelpath")
+        } else {
+            format!("{}{}", self.base_url, endpoint)
+        };
         let response = self.client.get(&url).send().await?.json::<T>().await?;
         Ok(response)
     }
