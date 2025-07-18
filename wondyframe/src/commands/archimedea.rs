@@ -93,14 +93,21 @@ fn create_modifiers_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> C
                 })
                 .collect::<Vec<_>>(),
         )
-        .fields(
-            archimedea
+        .fields(match r#type {
+            ArchimedeaType::Deep => archimedea
+                .missions
+                .iter()
+                .flat_map(|mission| &mission.risk_variables)
+                .rev()
+                .map(|risk| (risk.name.to_string(), risk.description.to_string(), false))
+                .collect::<Vec<_>>(),
+            ArchimedeaType::Temporal => archimedea
                 .missions
                 .iter()
                 .flat_map(|mission| &mission.risk_variables)
                 .map(|risk| (risk.name.to_string(), risk.description.to_string(), false))
                 .collect::<Vec<_>>(),
-        )
+        })
         .fields(
             archimedea
                 .personal_modifiers
