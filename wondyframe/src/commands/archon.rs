@@ -71,7 +71,7 @@ pub async fn archon(
                         .collect::<Vec<_>>()
                         .join(", ");
                     (
-                        format!("{} - {}", mission.type_key, mission.node),
+                        format!("{} - {}", mission.type_key, mission.node_key),
                         format!(
                             "Level: {}{}{}",
                             match index {
