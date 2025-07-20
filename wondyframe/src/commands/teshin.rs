@@ -14,12 +14,15 @@ use crate::types::context::Context;
 use crate::types::error::Error;
 use crate::utils::date::format_timestamp;
 
-#[poise::command(slash_command)]
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get current Teshin offerings")
+)]
 pub async fn teshin(
     ctx: Context<'_>,
     #[description = "Reply visible to other users?"] public: Option<bool>,
 ) -> Result<(), Error> {
-    info!("Steelpath command called");
+    info!("Teshin command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
     let teshin_offerings: Steelpath = warframe_client.fetch::<Steelpath>("steelpath").await?;

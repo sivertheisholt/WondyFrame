@@ -26,7 +26,11 @@ impl MissionLevel {
         }
     }
 }
-#[poise::command(slash_command)]
+
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get current Archon Hunt")
+)]
 pub async fn archon(
     ctx: Context<'_>,
     #[description = "Reply visible to other users?"] public: Option<bool>,

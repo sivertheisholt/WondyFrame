@@ -15,7 +15,10 @@ use crate::types::context::Context;
 use crate::types::error::Error;
 use crate::utils::date::format_timestamp;
 
-#[poise::command(slash_command)]
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get weekly Archimedea details")
+)]
 pub async fn archimedea(
     ctx: Context<'_>,
     #[description = "Deep or Temporal"] r#type: ArchimedeaType,

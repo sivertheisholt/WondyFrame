@@ -27,7 +27,10 @@ use crate::utils::date::format_timestamp;
 
 const MAX_PAGE_SIZE: i32 = 15;
 
-#[poise::command(slash_command)]
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get current Void Trader inventory")
+)]
 pub async fn baro(
     ctx: Context<'_>,
     #[description = "Reply visible to other users?"] public: Option<bool>,

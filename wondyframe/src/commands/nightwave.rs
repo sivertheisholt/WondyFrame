@@ -11,7 +11,10 @@ use crate::types::error::Error;
 use crate::utils::date::eta_from_utc;
 use crate::utils::date::format_timestamp;
 
-#[poise::command(slash_command)]
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get current Nightwave details")
+)]
 pub async fn nightwave(
     ctx: Context<'_>,
     #[description = "Reply visible to other users?"] public: Option<bool>,

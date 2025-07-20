@@ -9,7 +9,10 @@ use crate::types::context::Context;
 use crate::types::error::Error;
 use crate::utils::date::format_timestamp;
 
-#[poise::command(slash_command)]
+#[poise::command(
+    slash_command,
+    description_localized("en-US", "Get current Orb Vallis details")
+)]
 pub async fn fortuna(
     ctx: Context<'_>,
     #[description = "Reply visible to other users?"] public: Option<bool>,
