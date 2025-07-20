@@ -58,10 +58,10 @@ pub async fn teshin(
         .field(
             "Rotation",
             format!(
-                "{} - {} <:steel_essence:{}>",
+                "{} - {} {}",
                 teshin_offerings.rotation[week as usize - 1].name,
                 teshin_offerings.rotation[week as usize - 1].cost,
-                Emojis::SteelEssence.id()
+                Emojis::SteelEssence.full_definition()
             ),
             false,
         )

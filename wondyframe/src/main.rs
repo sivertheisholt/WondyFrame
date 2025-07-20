@@ -1,8 +1,8 @@
 use crate::{
     api::{warframe_client::WarframeClient, warframe_drops::WarframeDrops},
     commands::{
-        archimedea::archimedea, archon::archon, cetus::cetus, deimos::deimos, fissures::fissures,
-        fortuna::fortuna, nightwave::nightwave, teshin::teshin,
+        archimedea::archimedea, archon::archon, baro::baro, cetus::cetus, deimos::deimos,
+        fissures::fissures, fortuna::fortuna, nightwave::nightwave, teshin::teshin,
     },
     models::data::Data,
 };
@@ -48,6 +48,7 @@ async fn main() {
                 nightwave(),
                 teshin(),
                 archon(),
+                baro(),
             ],
 
             ..Default::default()
