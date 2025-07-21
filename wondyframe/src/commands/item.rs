@@ -16,7 +16,7 @@ use crate::types::error::Error;
 
 #[poise::command(
     slash_command,
-    description_localized("en-US", "Get current item details")
+    description_localized("en-US", "Get current item details and drop locations")
 )]
 pub async fn item(
     ctx: Context<'_>,
