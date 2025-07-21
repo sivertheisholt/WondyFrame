@@ -311,7 +311,7 @@ fn get_item_locations(
                 .map(|score| (k, score))
         })
         .max_by_key(|(_, score)| *score)
-        .unwrap();
+        .ok_or(())?;
 
     // You can adjust this threshold as needed
     if best_score < 30 {
