@@ -231,7 +231,6 @@ fn create_prime_embed(
         .thumbnail(Thumbnail::Item.url_with_item(item_name));
 
     for relic in relics {
-        // Add the relic field
         if relic.drop_locations.len() > 0 {
             embed = embed.field(
                 "",
@@ -243,7 +242,6 @@ fn create_prime_embed(
             );
         }
 
-        // Add up to 6 drop location fields for this relic
         let mut locations = relic.drop_locations.clone();
         locations.sort_by(|a, b| {
             b.chance
@@ -279,15 +277,22 @@ fn get_relic_drop_locations(
 ) -> Vec<DropLocation> {
     if let Some(locations) = item_locations.get(&format!("{} {} relic", relic_tier, relic_name)) {
         let mut sorted_locations = locations.clone();
+
+        // Sort by chance descending
         sorted_locations.sort_by(|a, b| {
             b.chance
                 .partial_cmp(&a.chance)
                 .unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        return sorted_locations;
+        // Deduplicate by game_mode, keeping the first (highest chance) for each mode
+        let mut seen_modes = std::collections::HashSet::new();
+        sorted_locations
+            .into_iter()
+            .filter(|loc| seen_modes.insert(loc.game_mode.clone()))
+            .collect()
     } else {
-        return vec![];
+        vec![]
     }
 }
 
@@ -302,7 +307,6 @@ fn get_item_locations(
 ) -> Result<DropLocationsWithItemName, ()> {
     let matcher = SkimMatcherV2::default();
 
-    // Find the best match using fuzzy-matcher
     let (best_item, best_score): (&String, i64) = item_locations
         .iter()
         .filter_map(|(k, _)| {
@@ -313,7 +317,6 @@ fn get_item_locations(
         .max_by_key(|(_, score)| *score)
         .ok_or(())?;
 
-    // You can adjust this threshold as needed
     if best_score < 30 {
         return Err(());
     }
