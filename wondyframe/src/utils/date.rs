@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{DateTime, Duration, TimeZone, Utc};
 
 pub fn format_timestamp() -> String {
     let now_utc: DateTime<Utc> = Utc::now();
@@ -14,6 +14,12 @@ pub fn format_timestamp() -> String {
     } else {
         input_utc.format("%b %-d, %Y").to_string()
     }
+}
+
+pub fn format_timestamp_from_utc(timestamp: f32) -> String {
+    // Convert ms to seconds
+    let input_utc = Utc.timestamp_millis_opt(timestamp as i64).single().unwrap();
+    input_utc.format("%b %-d, %Y %H:%M UTC").to_string()
 }
 
 pub fn eta_from_utc(utc: &str) -> String {

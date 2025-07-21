@@ -1,2 +1,2 @@
 pub mod warframe_client;
-pub mod warframe_drops;
+pub mod warframe_drops_client;

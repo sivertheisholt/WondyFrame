@@ -144,6 +144,11 @@ fn create_archimedea_embed(archimedea: &Archimedea, r#type: &ArchimedeaType) -> 
             ArchimedeaType::Deep => Thumbnail::DeepArchimedea.url(),
             ArchimedeaType::Temporal => Thumbnail::TemporalArchimedea.url(),
         })
+        .field(
+            "",
+            "NB: Archimedea state might be incorrect due to warframe API issues",
+            true,
+        )
         .fields(match r#type {
             ArchimedeaType::Deep => archimedea
                 .missions

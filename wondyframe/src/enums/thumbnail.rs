@@ -9,10 +9,20 @@ pub enum Thumbnail {
     Archon,
     SteelEssence,
     VoidTrader,
+    Warframe,
+    Item,
 }
 
 impl Thumbnail {
+    pub fn url_with_item(&self, item_name: &str) -> &'static str {
+        self.url_with_name(Some(item_name))
+    }
+
     pub fn url(&self) -> &'static str {
+        self.url_with_name(None)
+    }
+
+    fn url_with_name(&self, item_name: Option<&str>) -> &'static str {
         match self {
             Thumbnail::Cetus => "https://wiki.warframe.com/images/Cetus.png?a140d",
             Thumbnail::Fortuna => {
@@ -34,6 +44,29 @@ impl Thumbnail {
             }
             Thumbnail::VoidTrader => {
                 "https://static.wikia.nocookie.net/warframe/images/a/a7/TennoCon2020BaroCropped.png/revision/latest?cb=20200712232455"
+            }
+            Thumbnail::Warframe => {
+                "https://static.wikia.nocookie.net/warframe/images/e/e6/Site-logo.png/revision/latest?cb=20210617231240"
+            }
+            Thumbnail::Item => {
+                if item_name
+                    .as_deref()
+                    .map_or(false, |s: &str| s.contains("System"))
+                {
+                    "https://static.wikia.nocookie.net/warframe/images/d/d2/PrimeSystems.png/revision/latest/scale-to-width-down/32?cb=20230222214252"
+                } else if item_name
+                    .as_deref()
+                    .map_or(false, |s| s.contains("Chassis"))
+                {
+                    "https://static.wikia.nocookie.net/warframe/images/e/ef/PrimeChassis.png/revision/latest/scale-to-width-down/32?cb=20230222214229"
+                } else if item_name
+                    .as_deref()
+                    .map_or(false, |s| s.contains("Neuroptics"))
+                {
+                    "https://static.wikia.nocookie.net/warframe/images/c/c1/PrimeHelmet.png/revision/latest/scale-to-width-down/32?cb=20230222214208"
+                } else {
+                    "https://static.wikia.nocookie.net/warframe/images/e/e8/ExcaliburPrimeFull.png/revision/latest?cb=20180628213418"
+                }
             }
         }
     }
