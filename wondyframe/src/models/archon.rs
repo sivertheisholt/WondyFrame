@@ -7,12 +7,12 @@ pub struct Archon {
     pub activation: String,
 
     #[serde(rename = "startString")]
-    pub start_string: String,
+    pub start_string: Option<String>,
 
     #[serde(rename = "expiry")]
     pub expiry: String,
 
-    pub active: bool,
+    pub active: Option<bool>,
 
     #[serde(rename = "rewardPool")]
     pub reward_pool: String,

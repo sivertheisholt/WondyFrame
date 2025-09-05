@@ -51,13 +51,13 @@ pub struct Fissure {
 
     #[allow(dead_code)]
     #[serde(rename = "startString")]
-    pub start_string: String,
+    pub start_string: Option<String>,
 
     #[allow(dead_code)]
     pub expiry: String,
 
     #[allow(dead_code)]
-    pub active: bool,
+    pub active: Option<bool>,
 
     pub node: String,
 

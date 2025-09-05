@@ -7,11 +7,11 @@ pub struct Nightwave {
     pub activation: String,
 
     #[serde(rename = "startString")]
-    pub start_string: String,
+    pub start_string: Option<String>,
 
     pub expiry: String,
 
-    pub active: bool,
+    pub active: Option<bool>,
 
     pub season: u32,
 
@@ -28,7 +28,7 @@ pub struct Nightwave {
     pub active_challenges: Vec<Challenge>,
 
     #[serde(rename = "rewardTypes")]
-    pub reward_types: Vec<String>,
+    pub reward_types: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -41,11 +41,11 @@ pub struct Challenge {
     pub activation: String,
 
     #[serde(rename = "startString")]
-    pub start_string: String,
+    pub start_string: Option<String>,
 
     pub expiry: String,
 
-    pub active: bool,
+    pub active: Option<bool>,
 
     #[serde(rename = "isDaily")]
     pub is_daily: bool,
