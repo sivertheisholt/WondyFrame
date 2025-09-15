@@ -15,7 +15,7 @@ use crate::enums::thumbnail::Thumbnail;
 use crate::models::fissure::{Fissure, Tier};
 use crate::types::context::Context;
 use crate::types::error::Error;
-use crate::utils::date::format_timestamp;
+use crate::utils::date::{eta_from_utc, format_timestamp};
 
 #[poise::command(
     slash_command,
@@ -142,7 +142,9 @@ fn create_fissures_embed(
                         fissure.mission_type.to_string(),
                         format!(
                             "{} against {} \n **Expires** in  {}",
-                            fissure.node, fissure.enemy, fissure.eta
+                            fissure.node,
+                            fissure.enemy,
+                            eta_from_utc(&fissure.expiry)
                         ),
                         false,
                     )

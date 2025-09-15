@@ -66,7 +66,7 @@ pub struct Fissure {
 
     #[allow(dead_code)]
     #[serde(rename = "missionKey")]
-    pub mission_key: String,
+    pub mission_key: Option<String>,
 
     pub enemy: String,
 
@@ -85,9 +85,7 @@ pub struct Fissure {
     pub tier_num: u8,
 
     #[allow(dead_code)]
-    pub expired: bool,
-
-    pub eta: String,
+    pub expired: Option<bool>,
 
     #[allow(dead_code)]
     #[serde(rename = "isStorm")]

@@ -29,9 +29,7 @@ pub struct Archon {
     #[serde(rename = "factionKey")]
     pub faction_key: String,
 
-    pub expired: bool,
-
-    pub eta: String,
+    pub expired: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
