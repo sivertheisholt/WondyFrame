@@ -1,4 +1,3 @@
-pub mod archimedea;
 pub mod archon;
 pub mod baro;
 pub mod cetus;
