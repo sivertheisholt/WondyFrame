@@ -3,8 +3,8 @@ pub enum Thumbnail {
     Fortuna,
     Deimos,
     Fissure,
-    DeepArchimedea,
-    TemporalArchimedea,
+    // DeepArchimedea,
+    // TemporalArchimedea,
     Nightwave,
     Archon,
     SteelEssence,
@@ -32,10 +32,10 @@ impl Thumbnail {
                 "https://wiki.warframe.com/images/thumb/CambionDrift.jpg/1024px-CambionDrift.jpg?f2516"
             }
             Thumbnail::Fissure => "https://wiki.warframe.com/images/VoidTraces.png?fbc05",
-            Thumbnail::DeepArchimedea => {
-                "https://static.wikia.nocookie.net/warframe/images/b/b7/MurmurIcon.png/revision/latest?cb=20240326045206"
-            }
-            Thumbnail::TemporalArchimedea => "https://wiki.warframe.com/images/HexIcon.png?c8c7d",
+            // Thumbnail::DeepArchimedea => {
+            //     "https://static.wikia.nocookie.net/warframe/images/b/b7/MurmurIcon.png/revision/latest?cb=20240326045206"
+            // }
+            // Thumbnail::TemporalArchimedea => "https://wiki.warframe.com/images/HexIcon.png?c8c7d",
             Thumbnail::Nightwave => "https://wiki.warframe.com/images/NightwaveSyndicate.png?e0486",
             Thumbnail::Archon => "https://wiki.warframe.com/images/IconNarmer.png?1337d",
 

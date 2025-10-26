@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 
@@ -38,7 +38,13 @@ pub async fn archon(
     info!("Archon command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
-    let archon: Archon = warframe_client.fetch::<Archon>("archonHunt").await?;
+    let archon: Archon = match warframe_client.fetch::<Archon>("archonHunt").await {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err("Could not fetch Archon data at this time due to external failure.".into());
+        }
+    };
 
     let embed: CreateEmbed = CreateEmbed::new()
         .title(archon.boss)

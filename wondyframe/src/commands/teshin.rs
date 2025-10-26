@@ -1,7 +1,7 @@
 use chrono::Duration;
 use chrono::NaiveDate;
 use chrono::Utc;
-use log::info;
+use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 
@@ -25,7 +25,13 @@ pub async fn teshin(
     info!("Teshin command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
-    let teshin_offerings: Steelpath = warframe_client.fetch::<Steelpath>("steelpath").await?;
+    let teshin_offerings: Steelpath = match warframe_client.fetch::<Steelpath>("steelpath").await {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err("Could not fetch Teshin data at this time due to external failure.".into());
+        }
+    };
 
     let today = Utc::now().date_naive();
     let week = steel_path_offering_week();

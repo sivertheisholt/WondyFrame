@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use poise::CreateReply;
 use serenity::all::{
     ComponentInteraction, ComponentInteractionCollector, ComponentInteractionDataKind,
@@ -29,7 +29,15 @@ pub async fn fissures(
     info!("Fissures command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
-    let fissures: Vec<Fissure> = warframe_client.fetch::<Vec<Fissure>>("fissures").await?;
+    let fissures: Vec<Fissure> = match warframe_client.fetch::<Vec<Fissure>>("fissures").await {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err(
+                "Could not fetch Fissures data at this time due to external failure.".into(),
+            );
+        }
+    };
 
     let ctx_id: u64 = ctx.id();
     let relics_dropdown: String = format!("{}relics_dropdown", ctx_id);

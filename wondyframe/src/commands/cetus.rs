@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 use warframe::worldstate::{TimedEvent, queryable::Cetus};
@@ -20,7 +20,13 @@ pub async fn cetus(
     info!("Cetus command called");
     let is_public = public.unwrap_or(false);
     let client: &warframe::worldstate::Client = &ctx.data().client;
-    let cetus: Cetus = client.fetch::<Cetus>().await?;
+    let cetus: Cetus = match client.fetch::<Cetus>().await {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err("Could not fetch Cetus data at this time due to external failure.".into());
+        }
+    };
 
     let embed: CreateEmbed = CreateEmbed::new()
         .title("Cetus")

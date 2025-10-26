@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use poise::CreateReply;
 use serenity::all::ActionRowComponent;
 use serenity::all::ButtonKind;
@@ -38,9 +38,16 @@ pub async fn baro(
     info!("Baro command called");
     let is_public = public.unwrap_or(false);
     let warframe_client: &warframe_client::WarframeClient = &ctx.data().warframe_client;
-    let void_traders: Vec<VoidTrader> = warframe_client
+    let void_traders: Vec<VoidTrader> = match warframe_client
         .fetch::<Vec<VoidTrader>>("voidTraders")
-        .await?;
+        .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err("Could not fetch Baro data at this time due to external failure.".into());
+        }
+    };
 
     let page: i32 = 1;
     let ctx_id: u64 = ctx.id();

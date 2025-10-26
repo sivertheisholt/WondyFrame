@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
 use warframe::worldstate::{TimedEvent, queryable::CambionDrift};
@@ -20,7 +20,13 @@ pub async fn deimos(
     info!("Deimos command called");
     let is_public = public.unwrap_or(false);
     let client: &warframe::worldstate::Client = &ctx.data().client;
-    let cambion_drift: CambionDrift = client.fetch::<CambionDrift>().await?;
+    let cambion_drift: CambionDrift = match client.fetch::<CambionDrift>().await {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Error fetching data from API: {:?}", e);
+            return Err("Could not fetch Deimos data at this time due to external failure.".into());
+        }
+    };
 
     let embed: CreateEmbed = CreateEmbed::new()
         .title("Deimos")
