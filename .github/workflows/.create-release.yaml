@@ -2,6 +2,11 @@ name: Create release
 
 on:
   workflow_call:
+    inputs:
+      image-tags:
+        description: "Docker image with tag"
+        required: true
+        type: string
 
 jobs:
   create-release:
@@ -11,16 +16,17 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Get current version from Cargo.toml
+      - name: Extract tag from image reference
         id: version
         run: |
-          VERSION=$(grep '^version' wondyframe/Cargo.toml | head -n1 | sed -E 's/version = "(.*)"/\1/')
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          full_tag="${{ inputs.image-tags }}"
+          version="${full_tag##*:}"
+          echo "Extracted version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - uses: ncipollo/release-action@v1
         with:
-          body: "release"
           tag: ${{ steps.version.outputs.version }}
           generateReleaseNotes: true

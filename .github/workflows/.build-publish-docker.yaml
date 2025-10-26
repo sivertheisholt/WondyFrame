@@ -14,6 +14,9 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     outputs:
       image-tags: ${{ steps.meta.outputs.tags }}
     steps:
@@ -33,7 +36,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha,prefix={{date 'YYYY.MM.DD-HH.mm'}}-,priority=9002
-            
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6.18.0
         with:
