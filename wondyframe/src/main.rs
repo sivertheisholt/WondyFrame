@@ -72,7 +72,7 @@ async fn main() {
 
                 on_bot_ready(ctx, _ready).await;
                 Ok(Data {
-                    client: Client::new(),
+                    client: Client::default(),
                     warframe_client: WarframeClient::new("pc"),
                     warframe_drops: warframe_drops,
                     warframe_drops_modified_last: format_timestamp_from_utc(
