@@ -1,5 +1,5 @@
 # ---------- Build stage ----------
-FROM rust:1.91.0-slim-trixie AS builder
+FROM rust:1.92.0-slim-trixie AS builder
 
 RUN apt update
 RUN apt install -y musl-tools pkg-config libssl-dev openssl
