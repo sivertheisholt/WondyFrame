@@ -8,7 +8,7 @@ pub struct Relics {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Relic {
     pub tier: String,
-    #[serde(rename = "relicName")]
+    #[serde(rename = "relicName", default)]
     pub relic_name: String,
     pub state: String,
     pub rewards: Vec<Reward>,
