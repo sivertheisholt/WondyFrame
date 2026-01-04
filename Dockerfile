@@ -1,15 +1,26 @@
-# ---------- Build stage ----------
-FROM rust:1.92.0-slim-trixie AS builder
+# ---------- Build ----------
+FROM rust:1.92.0-slim-bookworm AS builder
 
-RUN apt update
-RUN apt install -y musl-tools pkg-config libssl-dev openssl
+RUN apt update && apt install -y \
+  musl-tools \
+  perl \
+  make \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN rustup target add x86_64-unknown-linux-musl
 
 WORKDIR /app
-COPY ./wondyframe/ .
+COPY ./wondyframe/ . 
 
-RUN cargo install --path .
+ENV CC=musl-gcc
+ENV RUSTFLAGS="-C target-feature=+crt-static"
 
-# Prod stage
-FROM gcr.io/distroless/cc
-COPY --from=builder /app/target/release/wondyframe /
-CMD ["./wondyframe"]
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+# ---------- Runtime ----------
+FROM gcr.io/distroless/static
+
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/wondyframe /wondyframe
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+CMD ["/wondyframe"] 
