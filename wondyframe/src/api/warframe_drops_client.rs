@@ -17,7 +17,7 @@ pub struct WarframeDropsClient {
 impl WarframeDropsClient {
     pub fn new() -> Self {
         Self {
-            base_url: format!("http://drops.warframestat.us/data"),
+            base_url: format!("https://drops.warframestat.us/data"),
             client: Client::new(),
         }
     }
