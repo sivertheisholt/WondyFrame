@@ -4,16 +4,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "friday"
 
   - package-ecosystem: "cargo"
     directory: "/wondyframe"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "friday"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "sunday"
+      day: "friday"
