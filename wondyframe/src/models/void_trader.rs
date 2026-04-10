@@ -11,7 +11,7 @@ pub struct InventoryItem {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VoidTrader {
-    pub id: String,
+    pub id: Option<String>,
     pub activation: String,
     #[serde(rename = "startString")]
     pub start_string: Option<String>,

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Archon {
-    pub id: String,
+    pub id: Option<String>,
 
     pub activation: String,
 
