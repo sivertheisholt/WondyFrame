@@ -45,7 +45,15 @@ pub async fn baro(
         Ok(v) => v,
         Err(e) => {
             error!("Error fetching data from API: {:?}", e);
-            return Err("Could not fetch Baro data at this time due to external failure.".into());
+
+            ctx.send(
+                poise::CreateReply::default()
+                    .content("Could not fetch Baro data at this time due to external failure with Warframe API.")
+                    .ephemeral(!is_public),
+            )
+            .await?;
+
+            return Ok(());
         }
     };
 
