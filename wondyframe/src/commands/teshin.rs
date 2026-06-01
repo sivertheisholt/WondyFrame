@@ -1,9 +1,9 @@
 use chrono::Duration;
 use chrono::NaiveDate;
 use chrono::Utc;
-use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
+use tracing::{error, info};
 
 use crate::api::warframe_client;
 use crate::enums::colors::Colors;

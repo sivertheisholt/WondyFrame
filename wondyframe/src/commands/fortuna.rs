@@ -1,6 +1,6 @@
-use log::{error, info};
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
+use tracing::{error, info};
 use warframe::worldstate::{TimedEvent, queryable::OrbVallis};
 
 use crate::enums::colors::Colors;

@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use fuzzy_matcher::FuzzyMatcher;
 use fuzzy_matcher::skim::SkimMatcherV2;
-use log::info;
 use serenity::all::CreateEmbed;
 use serenity::all::CreateEmbedFooter;
+use tracing::info;
 
 use crate::enums::colors::Colors;
 use crate::enums::thumbnail::Thumbnail;

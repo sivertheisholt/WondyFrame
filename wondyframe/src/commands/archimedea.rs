@@ -1,10 +1,10 @@
-use log::info;
 use poise::CreateReply;
 use serenity::all::{
     ButtonStyle, ComponentInteraction, ComponentInteractionCollector, CreateActionRow,
     CreateButton, CreateEmbed, CreateEmbedFooter, CreateInteractionResponse,
     CreateInteractionResponseMessage,
 };
+use tracing::info;
 
 use crate::api::warframe_client;
 use crate::enums::archimedea_type::ArchimedeaType;

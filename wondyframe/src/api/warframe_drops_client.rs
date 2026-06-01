@@ -1,5 +1,5 @@
-use log::info;
 use reqwest::Client;
+use tracing::info;
 
 use crate::models::drop_data::{
     blueprint_locations::BlueprintLocations, cetus_bounty_rewards::CetusBountyRewards,
