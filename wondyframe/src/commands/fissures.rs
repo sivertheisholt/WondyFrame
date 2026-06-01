@@ -1,4 +1,3 @@
-use log::{error, info};
 use poise::CreateReply;
 use serenity::all::{
     ComponentInteraction, ComponentInteractionCollector, ComponentInteractionDataKind,
@@ -7,6 +6,7 @@ use serenity::all::{
     CreateSelectMenuOption,
 };
 use std::str::FromStr;
+use tracing::{error, info};
 
 use crate::api::warframe_client;
 use crate::enums::colors::Colors;

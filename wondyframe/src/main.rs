@@ -9,7 +9,7 @@ use crate::{
     utils::date::format_timestamp_from_utc,
 };
 use ::serenity::all::{ActivityData, ClientBuilder, Context, GatewayIntents, GuildId};
-use log::info;
+use tracing::info;
 
 use poise::{
     Framework, FrameworkOptions,
@@ -37,7 +37,7 @@ async fn on_bot_ready(ctx: &Context, ready: &serenity::Ready) {
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    env_logger::init();
+    tracing_subscriber::fmt().json().init();
     let token = var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
     let intents = GatewayIntents::non_privileged();
 
