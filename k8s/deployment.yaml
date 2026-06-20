@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wondy-frame
+  namespace: wondy-services 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wondy-frame
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wondy-frame
+        observability.wondy.no/loki: 'true'
+    spec:
+      containers:
+        - name: wondy-frame
+          image: ghcr.io/sivertheisholt/wondy-frame:some-tag # {"$imagepolicy": "wondy-services:wondy-frame"}
+          env:
+            - name: DISCORD_TOKEN
+              valueFrom: 
+                secretKeyRef: 
+                  name: wondy-frame
+                  key: DISCORD_TOKEN 
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: wondy-frame
+                  key: ENVIRONMENT
+            - name: RUST_LOG
+              valueFrom:
+                secretKeyRef:
+                  name: wondy-frame
+                  key: RUST_LOG
+          resources:
+            requests:
+              memory: 128Mi
+            limits:
+              memory: 256Mi
